@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { Camera, Scan, Download, X, CheckCircle, AlertCircle, ArrowLeft, RefreshCw, Images } from 'lucide-react';
+import { Camera, Scan, Download, X, CheckCircle, AlertCircle, ArrowLeft, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 
 interface Photo {
@@ -56,17 +56,18 @@ export default function EventClientPage({ params }: { params: { code: string } }
       setScanProgress('');
     } catch (e) {
       console.error('Model load error:', e);
-      setScanProgress('Erreur chargement — rechargez la page');
+      setScanProgress('Erreur — rechargez la page');
     }
   }
 
+  // Identical to working version — no await play()
   async function startCamera() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
+        video: { facingMode: 'user', width: 640, height: 480 },
       });
       streamRef.current = stream;
-      if (videoRef.current) { videoRef.current.srcObject = stream; await videoRef.current.play(); }
+      if (videoRef.current) videoRef.current.srcObject = stream;
     } catch {
       setErrorMsg("Impossible d'accéder à la caméra. Autorisez l'accès dans votre navigateur.");
     }
@@ -79,12 +80,14 @@ export default function EventClientPage({ params }: { params: { code: string } }
 
   useEffect(() => {
     if (step === 'camera') startCamera();
-    return () => { if (step === 'camera') stopCamera(); };
+    return () => { if (step !== 'scanning') stopCamera(); };
   }, [step]);
 
+  // Identical detection + matching logic as working version
   async function captureAndMatch() {
     if (!videoRef.current || !canvasRef.current || !faceApiRef.current) return;
     const faceapi = faceApiRef.current;
+
     setStep('scanning');
     setScanProgress('Capture du visage...');
 
@@ -92,7 +95,8 @@ export default function EventClientPage({ params }: { params: { code: string } }
     const canvas = canvasRef.current;
     canvas.width = video.videoWidth || 640;
     canvas.height = video.videoHeight || 480;
-    canvas.getContext('2d')!.drawImage(video, 0, 0);
+    const ctx = canvas.getContext('2d')!;
+    ctx.drawImage(video, 0, 0);
     stopCamera();
 
     setScanProgress('Détection du visage...');
@@ -100,7 +104,8 @@ export default function EventClientPage({ params }: { params: { code: string } }
     try {
       detection = await faceapi
         .detectSingleFace(canvas, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.3 }))
-        .withFaceLandmarks().withFaceDescriptor();
+        .withFaceLandmarks()
+        .withFaceDescriptor();
     } catch (e) { console.error('Detection error:', e); }
 
     if (!detection) {
@@ -110,8 +115,8 @@ export default function EventClientPage({ params }: { params: { code: string } }
     }
 
     const clientDescriptor = detection.descriptor;
-    const indexed = photos.filter(p => p.faceDescriptors?.length > 0);
-    setScanProgress(`Comparaison avec ${indexed.length} photos...`);
+    const indexed = photos.filter(p => p.faceDescriptors && p.faceDescriptors.length > 0);
+    setScanProgress(`Comparaison avec ${indexed.length} photos indexées...`);
 
     const THRESHOLD = 0.55;
     const matched: Photo[] = [];
@@ -132,8 +137,7 @@ export default function EventClientPage({ params }: { params: { code: string } }
     a.href = url; a.download = filename || 'photo.jpg'; a.target = '_blank'; a.click();
   }
 
-  const indexedCount = photos.filter(p => p.faceDescriptors?.length > 0).length;
-
+  // ─── Loading ────────────────────────────────────────────────────
   if (step === 'loading-event') return (
     <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
       <div className="text-center">
@@ -143,6 +147,7 @@ export default function EventClientPage({ params }: { params: { code: string } }
     </div>
   );
 
+  // ─── Error ──────────────────────────────────────────────────────
   if (step === 'error') return (
     <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--bg)' }}>
       <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center">
@@ -173,27 +178,19 @@ export default function EventClientPage({ params }: { params: { code: string } }
         </div>
       </header>
 
-      {/* Camera step */}
+      {/* ─── Camera ─────────────────────────────────────────────── */}
       {(step === 'camera' || step === 'scanning') && (
         <div className="flex-1 flex flex-col items-center justify-center px-4 py-6 sm:py-10">
           <div className="w-full max-w-md">
-            <div className="text-center mb-5 sm:mb-6">
+            <div className="text-center mb-5">
               <h2 className="text-xl sm:text-2xl font-bold mb-2">Reconnaissance faciale</h2>
               <p className="text-sm" style={{ color: 'var(--muted)' }}>
                 Placez votre visage au centre et appuyez sur le bouton
               </p>
             </div>
 
-            {indexedCount === 0 && step === 'camera' && (
-              <div className="mb-4 p-3 rounded-xl text-xs sm:text-sm text-center flex items-start gap-2"
-                style={{ background: 'rgba(255,165,0,0.15)', color: '#ffa500', border: '1px solid rgba(255,165,0,0.3)' }}>
-                <AlertCircle size={15} className="flex-shrink-0 mt-0.5" />
-                Les photos n'ont pas encore été indexées par le photographe.
-              </div>
-            )}
-
             {errorMsg && (
-              <div className="mb-4 p-3 rounded-xl text-xs sm:text-sm text-center"
+              <div className="mb-4 p-3 rounded-xl text-sm text-center"
                 style={{ background: 'rgba(255,100,100,0.15)', color: '#ff6584', border: '1px solid rgba(255,100,100,0.3)' }}>
                 {errorMsg}
               </div>
@@ -202,21 +199,29 @@ export default function EventClientPage({ params }: { params: { code: string } }
             {/* Camera view */}
             <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden glass mb-5"
               style={{ aspectRatio: '4/3', maxHeight: '55vh' }}>
-              <video ref={videoRef} autoPlay playsInline muted
-                className="w-full h-full object-cover" style={{ transform: 'scaleX(-1)' }} />
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full h-full object-cover"
+                style={{ transform: 'scaleX(-1)' }}
+              />
               <canvas ref={canvasRef} className="hidden" />
 
-              {/* Oval guide */}
+              {/* Oval face guide */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="border-4 border-dashed rounded-full transition-colors"
                   style={{
-                    width: 'min(45%, 180px)', height: 'min(55%, 220px)',
-                    borderColor: step === 'scanning' ? '#6c63ff' : 'rgba(255,255,255,0.4)',
+                    width: 'min(46%, 180px)',
+                    height: 'min(60%, 220px)',
+                    borderColor: step === 'scanning' ? '#6c63ff' : 'rgba(255,255,255,0.45)',
                   }} />
               </div>
 
+              {/* Scanning overlay */}
               {step === 'scanning' && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                <div className="absolute inset-0 flex items-center justify-center bg-black/55">
                   <div className="text-center px-4">
                     <div className="w-12 h-12 border-4 border-purple-400 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
                     <p className="text-white font-medium text-sm">{scanProgress}</p>
@@ -224,6 +229,7 @@ export default function EventClientPage({ params }: { params: { code: string } }
                 </div>
               )}
 
+              {/* Models loading indicator */}
               {step === 'camera' && !modelsLoaded && (
                 <div className="absolute bottom-3 inset-x-0 flex justify-center">
                   <div className="glass px-3 py-1.5 rounded-full text-xs flex items-center gap-2">
@@ -234,18 +240,21 @@ export default function EventClientPage({ params }: { params: { code: string } }
               )}
             </div>
 
-            {/* Actions */}
+            {/* Buttons */}
             <div className="flex gap-3">
-              <button onClick={() => { setErrorMsg(''); captureAndMatch(); }}
-                disabled={!modelsLoaded || step === 'scanning' || indexedCount === 0}
-                className="btn-primary flex-1 py-4 text-base flex items-center justify-center gap-2">
+              <button
+                onClick={() => { setErrorMsg(''); captureAndMatch(); }}
+                disabled={!modelsLoaded || step === 'scanning'}
+                className="btn-primary flex-1 py-4 text-base flex items-center justify-center gap-2"
+              >
                 <Scan size={20} />
-                {!modelsLoaded ? 'Chargement...' : 'Me reconnaître'}
+                {!modelsLoaded ? 'Chargement IA...' : 'Me reconnaître'}
               </button>
-              <button onClick={() => { setErrorMsg(''); stopCamera(); setStep('all-photos'); }}
-                className="glass px-4 py-4 rounded-xl hover:bg-white/10 transition-colors text-xs font-medium flex flex-col items-center gap-1">
-                <Images size={18} />
-                <span>Tout voir</span>
+              <button
+                onClick={() => { setErrorMsg(''); setStep('all-photos'); }}
+                className="glass px-4 py-4 rounded-xl hover:bg-white/10 transition-colors text-sm font-medium"
+              >
+                Voir tout
               </button>
             </div>
 
@@ -256,7 +265,7 @@ export default function EventClientPage({ params }: { params: { code: string } }
         </div>
       )}
 
-      {/* Results */}
+      {/* ─── Results ────────────────────────────────────────────── */}
       {step === 'results' && (
         <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 max-w-4xl w-full mx-auto">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
@@ -266,17 +275,17 @@ export default function EventClientPage({ params }: { params: { code: string } }
                 <h2 className="text-xl sm:text-2xl font-bold">Vos photos</h2>
               </div>
               <p className="text-sm" style={{ color: 'var(--muted)' }}>
-                {matchedPhotos.length} résultat{matchedPhotos.length !== 1 ? 's' : ''}
+                {matchedPhotos.length} photo{matchedPhotos.length !== 1 ? 's' : ''} trouvée{matchedPhotos.length !== 1 ? 's' : ''}
               </p>
             </div>
-            <div className="flex gap-2">
-              <button onClick={() => { setErrorMsg(''); setStep('camera'); setMatchedPhotos([]); }}
+            <div className="flex gap-2 flex-wrap">
+              <button onClick={() => { setErrorMsg(''); setMatchedPhotos([]); setStep('camera'); }}
                 className="glass flex items-center gap-1.5 px-3 py-2 rounded-xl hover:bg-white/10 transition-colors text-xs sm:text-sm">
                 <RefreshCw size={14} /> Réessayer
               </button>
               <button onClick={() => setStep('all-photos')}
                 className="glass flex items-center gap-1.5 px-3 py-2 rounded-xl hover:bg-white/10 transition-colors text-xs sm:text-sm">
-                <Images size={14} /> Toutes
+                Toutes les photos
               </button>
             </div>
           </div>
@@ -286,9 +295,7 @@ export default function EventClientPage({ params }: { params: { code: string } }
               <Camera size={52} className="mx-auto mb-4 opacity-30" />
               <h3 className="text-lg font-semibold mb-2">Aucune correspondance</h3>
               <p className="text-sm mb-6" style={{ color: 'var(--muted)' }}>
-                {indexedCount === 0
-                  ? "Les photos ne sont pas encore indexées."
-                  : "Votre visage n'a pas été reconnu. Essayez dans un endroit mieux éclairé."}
+                Votre visage n'a pas été reconnu. Essayez dans un endroit bien éclairé, face à la caméra.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <button onClick={() => { setErrorMsg(''); setStep('camera'); }} className="btn-primary text-sm">
@@ -303,8 +310,10 @@ export default function EventClientPage({ params }: { params: { code: string } }
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {matchedPhotos.map(photo => (
-                <div key={photo._id} className="group relative rounded-xl sm:rounded-2xl overflow-hidden card-hover cursor-pointer"
-                  style={{ aspectRatio: '1' }} onClick={() => setSelectedPhoto(photo)}>
+                <div key={photo._id}
+                  className="group relative rounded-xl sm:rounded-2xl overflow-hidden card-hover cursor-pointer"
+                  style={{ aspectRatio: '1' }}
+                  onClick={() => setSelectedPhoto(photo)}>
                   <img src={photo.url} alt="" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <button onClick={e => { e.stopPropagation(); downloadPhoto(photo.url, photo.filename); }}
@@ -319,7 +328,7 @@ export default function EventClientPage({ params }: { params: { code: string } }
         </div>
       )}
 
-      {/* All photos */}
+      {/* ─── All photos ─────────────────────────────────────────── */}
       {step === 'all-photos' && (
         <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 max-w-4xl w-full mx-auto">
           <div className="flex items-center justify-between mb-6">
@@ -334,8 +343,10 @@ export default function EventClientPage({ params }: { params: { code: string } }
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {photos.map(photo => (
-              <div key={photo._id} className="group relative rounded-xl sm:rounded-2xl overflow-hidden card-hover cursor-pointer"
-                style={{ aspectRatio: '1' }} onClick={() => setSelectedPhoto(photo)}>
+              <div key={photo._id}
+                className="group relative rounded-xl sm:rounded-2xl overflow-hidden card-hover cursor-pointer"
+                style={{ aspectRatio: '1' }}
+                onClick={() => setSelectedPhoto(photo)}>
                 <img src={photo.url} alt="" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <button onClick={e => { e.stopPropagation(); downloadPhoto(photo.url, photo.filename); }}
@@ -349,15 +360,15 @@ export default function EventClientPage({ params }: { params: { code: string } }
         </div>
       )}
 
-      {/* Lightbox — mobile optimized */}
+      {/* ─── Lightbox ───────────────────────────────────────────── */}
       {selectedPhoto && (
         <div className="fixed inset-0 z-50 bg-black/95 flex flex-col"
           onClick={() => setSelectedPhoto(null)}>
-          <div className="flex justify-between items-center p-4 flex-shrink-0">
+          <div className="flex justify-between items-center p-4 flex-shrink-0" onClick={e => e.stopPropagation()}>
             <button onClick={() => setSelectedPhoto(null)} style={{ color: 'var(--muted)' }}>
               <X size={24} />
             </button>
-            <button onClick={e => { e.stopPropagation(); downloadPhoto(selectedPhoto.url, selectedPhoto.filename); }}
+            <button onClick={() => downloadPhoto(selectedPhoto.url, selectedPhoto.filename)}
               className="btn-primary flex items-center gap-2 text-sm py-2 px-4">
               <Download size={15} /> Télécharger
             </button>
