@@ -2,7 +2,7 @@
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Camera, Users, Plus, Trash2, ToggleLeft, ToggleRight, LogOut, Eye, EyeOff } from 'lucide-react';
+import { Camera, Users, Plus, Trash2, ToggleLeft, ToggleRight, LogOut, Eye, EyeOff, X } from 'lucide-react';
 
 interface Photographer {
   _id: string;
@@ -30,8 +30,7 @@ export default function AdminPage() {
 
   async function fetchPhotographers() {
     const res = await fetch('/api/users');
-    const data = await res.json();
-    setPhotographers(data);
+    setPhotographers(await res.json());
   }
 
   async function createPhotographer(e: React.FormEvent) {
@@ -70,70 +69,80 @@ export default function AdminPage() {
 
   if (status === 'loading') return (
     <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
-      <div className="text-purple-400 text-xl">Chargement...</div>
+      <div className="w-10 h-10 border-4 border-purple-400 border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
       {/* Header */}
-      <header className="glass px-6 py-4 flex justify-between items-center">
+      <header className="glass px-4 sm:px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <Camera className="text-purple-400" size={24} />
-          <span className="font-bold gradient-text">PhotoShare Admin</span>
+          <Camera className="text-purple-400" size={22} />
+          <span className="font-bold gradient-text text-sm sm:text-base">PhotoShare Admin</span>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm" style={{ color: 'var(--muted)' }}>
+        <div className="flex items-center gap-2 sm:gap-4">
+          <span className="text-xs sm:text-sm hidden sm:block" style={{ color: 'var(--muted)' }}>
             {session?.user?.name}
           </span>
           <button onClick={() => signOut({ callbackUrl: '/' })}
-            className="flex items-center gap-1 text-sm hover:text-red-400 transition-colors"
+            className="flex items-center gap-1 text-xs sm:text-sm hover:text-red-400 transition-colors"
             style={{ color: 'var(--muted)' }}>
-            <LogOut size={16} /> Déconnexion
+            <LogOut size={15} />
+            <span className="hidden sm:inline">Déconnexion</span>
           </button>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-10">
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
         {/* Stats */}
-        <div className="grid grid-cols-2 gap-4 mb-10">
-          <div className="glass rounded-2xl p-6">
-            <div className="text-4xl font-black gradient-text">{photographers.length}</div>
-            <div className="text-sm mt-1" style={{ color: 'var(--muted)' }}>Photographes</div>
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-8">
+          <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6">
+            <div className="text-3xl sm:text-4xl font-black gradient-text">{photographers.length}</div>
+            <div className="text-xs sm:text-sm mt-1" style={{ color: 'var(--muted)' }}>Photographes</div>
           </div>
-          <div className="glass rounded-2xl p-6">
-            <div className="text-4xl font-black gradient-text">{photographers.filter(p => p.isActive).length}</div>
-            <div className="text-sm mt-1" style={{ color: 'var(--muted)' }}>Actifs</div>
+          <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6">
+            <div className="text-3xl sm:text-4xl font-black gradient-text">
+              {photographers.filter(p => p.isActive).length}
+            </div>
+            <div className="text-xs sm:text-sm mt-1" style={{ color: 'var(--muted)' }}>Actifs</div>
           </div>
         </div>
 
-        {/* Photographers */}
-        <div className="flex justify-between items-center mb-6">
+        {/* Header row */}
+        <div className="flex justify-between items-center mb-4 sm:mb-6">
           <div className="flex items-center gap-2">
-            <Users size={20} className="text-purple-400" />
-            <h2 className="text-xl font-bold">Photographes</h2>
+            <Users size={18} className="text-purple-400" />
+            <h2 className="text-lg sm:text-xl font-bold">Photographes</h2>
           </div>
-          <button onClick={() => setShowForm(!showForm)} className="btn-primary flex items-center gap-2">
-            <Plus size={16} /> Nouveau photographe
+          <button onClick={() => setShowForm(!showForm)}
+            className="btn-primary flex items-center gap-1.5 text-sm py-2 px-3 sm:px-4">
+            <Plus size={15} />
+            <span className="hidden sm:inline">Nouveau</span>
+            <span className="sm:hidden">+</span>
           </button>
         </div>
 
         {/* Create Form */}
         {showForm && (
-          <div className="glass rounded-2xl p-6 mb-6 fade-in">
-            <h3 className="font-semibold mb-4">Créer un compte photographe</h3>
+          <div className="glass rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-5 fade-in">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-semibold text-sm sm:text-base">Créer un compte photographe</h3>
+              <button onClick={() => setShowForm(false)} style={{ color: 'var(--muted)' }}>
+                <X size={18} />
+              </button>
+            </div>
             {error && (
-              <div className="mb-3 p-2 rounded-lg text-sm" style={{ background: 'rgba(255,100,100,0.1)', color: '#ff6584' }}>
-                {error}
-              </div>
+              <div className="mb-3 p-2 rounded-lg text-xs sm:text-sm"
+                style={{ background: 'rgba(255,100,100,0.1)', color: '#ff6584' }}>{error}</div>
             )}
-            <form onSubmit={createPhotographer} className="grid md:grid-cols-3 gap-4">
-              <input className="input" placeholder="Nom complet" value={form.name}
+            <form onSubmit={createPhotographer} className="space-y-3">
+              <input className="input text-base" placeholder="Nom complet" value={form.name}
                 onChange={e => setForm({ ...form, name: e.target.value })} required />
-              <input className="input" type="email" placeholder="Email"
+              <input className="input text-base" type="email" placeholder="Email"
                 value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
               <div className="relative">
-                <input className="input pr-10" type={showPwd ? 'text' : 'password'}
+                <input className="input pr-10 text-base" type={showPwd ? 'text' : 'password'}
                   placeholder="Mot de passe"
                   value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required />
                 <button type="button" onClick={() => setShowPwd(!showPwd)}
@@ -141,15 +150,9 @@ export default function AdminPage() {
                   {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
-              <div className="md:col-span-3 flex gap-3">
-                <button type="submit" className="btn-primary" disabled={loading}>
-                  {loading ? 'Création...' : 'Créer le compte'}
-                </button>
-                <button type="button" onClick={() => setShowForm(false)}
-                  className="glass px-4 py-2 rounded-xl hover:bg-white/10 transition-colors">
-                  Annuler
-                </button>
-              </div>
+              <button type="submit" className="btn-primary w-full py-3 text-sm" disabled={loading}>
+                {loading ? 'Création...' : 'Créer le compte'}
+              </button>
             </form>
           </div>
         )}
@@ -157,35 +160,40 @@ export default function AdminPage() {
         {/* List */}
         <div className="space-y-3">
           {photographers.length === 0 && (
-            <div className="glass rounded-2xl p-12 text-center" style={{ color: 'var(--muted)' }}>
+            <div className="glass rounded-xl sm:rounded-2xl p-10 sm:p-12 text-center text-sm"
+              style={{ color: 'var(--muted)' }}>
               Aucun photographe. Créez-en un !
             </div>
           )}
           {photographers.map(p => (
-            <div key={p._id} className="glass rounded-2xl p-5 flex items-center justify-between card-hover">
-              <div>
-                <div className="font-semibold">{p.name}</div>
-                <div className="text-sm mt-0.5" style={{ color: 'var(--muted)' }}>{p.email}</div>
-                <div className="text-xs mt-1" style={{ color: 'var(--muted)' }}>
-                  Créé le {new Date(p.createdAt).toLocaleDateString('fr-FR')}
+            <div key={p._id} className="glass rounded-xl sm:rounded-2xl p-4 sm:p-5 card-hover">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold text-sm sm:text-base truncate">{p.name}</div>
+                  <div className="text-xs sm:text-sm mt-0.5 truncate" style={{ color: 'var(--muted)' }}>{p.email}</div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                      p.isActive ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                    }`}>
+                      {p.isActive ? 'Actif' : 'Désactivé'}
+                    </span>
+                    <span className="text-xs" style={{ color: 'var(--muted)' }}>
+                      {new Date(p.createdAt).toLocaleDateString('fr-FR')}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className={`text-xs px-3 py-1 rounded-full font-medium ${
-                  p.isActive
-                    ? 'bg-green-500/20 text-green-400'
-                    : 'bg-red-500/20 text-red-400'
-                }`}>
-                  {p.isActive ? 'Actif' : 'Désactivé'}
-                </span>
-                <button onClick={() => toggleActive(p._id, p.isActive)}
-                  className="hover:text-purple-400 transition-colors" style={{ color: 'var(--muted)' }}>
-                  {p.isActive ? <ToggleRight size={24} className="text-purple-400" /> : <ToggleLeft size={24} />}
-                </button>
-                <button onClick={() => deleteUser(p._id)}
-                  className="hover:text-red-400 transition-colors" style={{ color: 'var(--muted)' }}>
-                  <Trash2 size={18} />
-                </button>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <button onClick={() => toggleActive(p._id, p.isActive)}
+                    className="p-1.5 hover:text-purple-400 transition-colors" style={{ color: 'var(--muted)' }}>
+                    {p.isActive
+                      ? <ToggleRight size={22} className="text-purple-400" />
+                      : <ToggleLeft size={22} />}
+                  </button>
+                  <button onClick={() => deleteUser(p._id)}
+                    className="p-1.5 hover:text-red-400 transition-colors" style={{ color: 'var(--muted)' }}>
+                    <Trash2 size={17} />
+                  </button>
+                </div>
               </div>
             </div>
           ))}

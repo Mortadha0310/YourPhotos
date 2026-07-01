@@ -24,26 +24,27 @@ export default function LoginPage() {
     } else {
       const meRes = await fetch('/api/auth/session');
       const session = await meRes.json();
-      if (session?.user?.role === 'admin') router.push('/admin');
-      else router.push('/photographer');
+      router.push(session?.user?.role === 'admin' ? '/admin' : '/photographer');
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--bg)' }}>
+    <div className="min-h-screen flex items-center justify-center px-4 py-8"
+      style={{ background: 'var(--bg)' }}>
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/3 left-1/3 w-80 h-80 rounded-full opacity-20 blur-3xl"
+        <div className="absolute top-1/3 left-1/3 w-64 sm:w-80 h-64 sm:h-80 rounded-full opacity-20 blur-3xl"
           style={{ background: 'radial-gradient(circle, #6c63ff, transparent)' }} />
       </div>
-      <div className="relative w-full max-w-md">
-        <div className="glass rounded-3xl p-8 fade-in">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4"
+
+      <div className="relative w-full max-w-sm sm:max-w-md">
+        <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 fade-in">
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl mb-4"
               style={{ background: 'linear-gradient(135deg, #6c63ff, #9b5de5)' }}>
-              <Camera size={32} className="text-white" />
+              <Camera size={28} className="text-white" />
             </div>
-            <h1 className="text-2xl font-bold">Connexion</h1>
-            <p className="mt-1" style={{ color: 'var(--muted)' }}>Espace photographe & admin</p>
+            <h1 className="text-xl sm:text-2xl font-bold">Connexion</h1>
+            <p className="mt-1 text-sm" style={{ color: 'var(--muted)' }}>Espace photographe & admin</p>
           </div>
 
           {error && (
@@ -57,42 +58,29 @@ export default function LoginPage() {
             <div>
               <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--muted)' }}>Email</label>
               <div className="relative">
-                <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--muted)' }} />
-                <input
-                  className="input pl-9"
-                  type="email"
-                  placeholder="votre@email.com"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  required
-                />
+                <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--muted)' }} />
+                <input className="input pl-9 text-base" type="email" placeholder="votre@email.com"
+                  value={email} onChange={e => setEmail(e.target.value)} required />
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--muted)' }}>Mot de passe</label>
               <div className="relative">
-                <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--muted)' }} />
-                <input
-                  className="input pl-9 pr-10"
-                  type={showPwd ? 'text' : 'password'}
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  required
-                />
+                <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--muted)' }} />
+                <input className="input pl-9 pr-10 text-base" type={showPwd ? 'text' : 'password'}
+                  placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
                 <button type="button" onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                  style={{ color: 'var(--muted)' }}>
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1" style={{ color: 'var(--muted)' }}>
                   {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
-            <button type="submit" className="btn-primary w-full py-3 mt-2" disabled={loading}>
+            <button type="submit" className="btn-primary w-full py-3 mt-2 text-base" disabled={loading}>
               {loading ? 'Connexion...' : 'Se connecter'}
             </button>
           </form>
 
-          <p className="text-center mt-6 text-sm" style={{ color: 'var(--muted)' }}>
+          <p className="text-center mt-5 text-sm" style={{ color: 'var(--muted)' }}>
             <Link href="/" className="hover:text-white transition-colors">← Retour à l'accueil</Link>
           </p>
         </div>
