@@ -13,6 +13,12 @@ interface EventData {
 }
 type Step = 'loading-event' | 'camera' | 'scanning' | 'results' | 'all-photos' | 'error';
 
+// Cloudinary thumbnail URL (400px wide, auto quality)
+function thumb(url: string) {
+  if (!url.includes('cloudinary.com')) return url;
+  return url.replace('/upload/', '/upload/w_400,q_auto,f_auto/');
+}
+
 export default function EventClientPage({ params }: { params: { code: string } }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -44,11 +50,12 @@ export default function EventClientPage({ params }: { params: { code: string } }
 
   async function loadModels() {
     try {
-      setScanProgress('Chargement des modèles IA...');
+      setScanProgress('Chargement...');
       const faceapi = await import('face-api.js');
+      // TinyFaceDetector = 190 KB  vs  SSD MobileNet = 22 MB
       await Promise.all([
-        faceapi.nets.ssdMobilenetv1.loadFromUri('/models'),
-        faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
+        faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
+        faceapi.nets.faceLandmark68TinyNet.loadFromUri('/models'),
         faceapi.nets.faceRecognitionNet.loadFromUri('/models'),
       ]);
       faceApiRef.current = faceapi;
@@ -60,7 +67,6 @@ export default function EventClientPage({ params }: { params: { code: string } }
     }
   }
 
-  // Identical to working version — no await play()
   async function startCamera() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -83,7 +89,6 @@ export default function EventClientPage({ params }: { params: { code: string } }
     return () => { if (step !== 'scanning') stopCamera(); };
   }, [step]);
 
-  // Identical detection + matching logic as working version
   async function captureAndMatch() {
     if (!videoRef.current || !canvasRef.current || !faceApiRef.current) return;
     const faceapi = faceApiRef.current;
@@ -95,16 +100,16 @@ export default function EventClientPage({ params }: { params: { code: string } }
     const canvas = canvasRef.current;
     canvas.width = video.videoWidth || 640;
     canvas.height = video.videoHeight || 480;
-    const ctx = canvas.getContext('2d')!;
-    ctx.drawImage(video, 0, 0);
+    canvas.getContext('2d')!.drawImage(video, 0, 0);
     stopCamera();
 
     setScanProgress('Détection du visage...');
     let detection;
     try {
+      // TinyFaceDetector: rapide, léger (~190KB)
       detection = await faceapi
-        .detectSingleFace(canvas, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.3 }))
-        .withFaceLandmarks()
+        .detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.3 }))
+        .withFaceLandmarks(true)
         .withFaceDescriptor();
     } catch (e) { console.error('Detection error:', e); }
 
@@ -116,7 +121,7 @@ export default function EventClientPage({ params }: { params: { code: string } }
 
     const clientDescriptor = detection.descriptor;
     const indexed = photos.filter(p => p.faceDescriptors && p.faceDescriptors.length > 0);
-    setScanProgress(`Comparaison avec ${indexed.length} photos indexées...`);
+    setScanProgress(`Comparaison avec ${indexed.length} photos...`);
 
     const THRESHOLD = 0.55;
     const matched: Photo[] = [];
@@ -137,7 +142,6 @@ export default function EventClientPage({ params }: { params: { code: string } }
     a.href = url; a.download = filename || 'photo.jpg'; a.target = '_blank'; a.click();
   }
 
-  // ─── Loading ────────────────────────────────────────────────────
   if (step === 'loading-event') return (
     <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
       <div className="text-center">
@@ -147,7 +151,6 @@ export default function EventClientPage({ params }: { params: { code: string } }
     </div>
   );
 
-  // ─── Error ──────────────────────────────────────────────────────
   if (step === 'error') return (
     <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--bg)' }}>
       <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center">
@@ -161,7 +164,6 @@ export default function EventClientPage({ params }: { params: { code: string } }
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg)' }}>
-      {/* Header */}
       <header className="glass px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center flex-shrink-0">
         <Link href="/event" className="flex items-center gap-1.5 hover:text-purple-400 transition-colors"
           style={{ color: 'var(--muted)' }}>
@@ -178,7 +180,7 @@ export default function EventClientPage({ params }: { params: { code: string } }
         </div>
       </header>
 
-      {/* ─── Camera ─────────────────────────────────────────────── */}
+      {/* Camera */}
       {(step === 'camera' || step === 'scanning') && (
         <div className="flex-1 flex flex-col items-center justify-center px-4 py-6 sm:py-10">
           <div className="w-full max-w-md">
@@ -196,30 +198,20 @@ export default function EventClientPage({ params }: { params: { code: string } }
               </div>
             )}
 
-            {/* Camera view */}
             <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden glass mb-5"
               style={{ aspectRatio: '4/3', maxHeight: '55vh' }}>
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className="w-full h-full object-cover"
-                style={{ transform: 'scaleX(-1)' }}
-              />
+              <video ref={videoRef} autoPlay playsInline muted
+                className="w-full h-full object-cover" style={{ transform: 'scaleX(-1)' }} />
               <canvas ref={canvasRef} className="hidden" />
 
-              {/* Oval face guide */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="border-4 border-dashed rounded-full transition-colors"
                   style={{
-                    width: 'min(46%, 180px)',
-                    height: 'min(60%, 220px)',
+                    width: 'min(46%, 180px)', height: 'min(60%, 220px)',
                     borderColor: step === 'scanning' ? '#6c63ff' : 'rgba(255,255,255,0.45)',
                   }} />
               </div>
 
-              {/* Scanning overlay */}
               {step === 'scanning' && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/55">
                   <div className="text-center px-4">
@@ -229,7 +221,6 @@ export default function EventClientPage({ params }: { params: { code: string } }
                 </div>
               )}
 
-              {/* Models loading indicator */}
               {step === 'camera' && !modelsLoaded && (
                 <div className="absolute bottom-3 inset-x-0 flex justify-center">
                   <div className="glass px-3 py-1.5 rounded-full text-xs flex items-center gap-2">
@@ -240,20 +231,15 @@ export default function EventClientPage({ params }: { params: { code: string } }
               )}
             </div>
 
-            {/* Buttons */}
             <div className="flex gap-3">
-              <button
-                onClick={() => { setErrorMsg(''); captureAndMatch(); }}
+              <button onClick={() => { setErrorMsg(''); captureAndMatch(); }}
                 disabled={!modelsLoaded || step === 'scanning'}
-                className="btn-primary flex-1 py-4 text-base flex items-center justify-center gap-2"
-              >
+                className="btn-primary flex-1 py-4 text-base flex items-center justify-center gap-2">
                 <Scan size={20} />
                 {!modelsLoaded ? 'Chargement IA...' : 'Me reconnaître'}
               </button>
-              <button
-                onClick={() => { setErrorMsg(''); setStep('all-photos'); }}
-                className="glass px-4 py-4 rounded-xl hover:bg-white/10 transition-colors text-sm font-medium"
-              >
+              <button onClick={() => { setErrorMsg(''); setStep('all-photos'); }}
+                className="glass px-4 py-4 rounded-xl hover:bg-white/10 transition-colors text-sm font-medium">
                 Voir tout
               </button>
             </div>
@@ -265,7 +251,7 @@ export default function EventClientPage({ params }: { params: { code: string } }
         </div>
       )}
 
-      {/* ─── Results ────────────────────────────────────────────── */}
+      {/* Results */}
       {step === 'results' && (
         <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 max-w-4xl w-full mx-auto">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
@@ -295,12 +281,10 @@ export default function EventClientPage({ params }: { params: { code: string } }
               <Camera size={52} className="mx-auto mb-4 opacity-30" />
               <h3 className="text-lg font-semibold mb-2">Aucune correspondance</h3>
               <p className="text-sm mb-6" style={{ color: 'var(--muted)' }}>
-                Votre visage n'a pas été reconnu. Essayez dans un endroit bien éclairé, face à la caméra.
+                Votre visage n'a pas été reconnu. Essayez dans un endroit bien éclairé.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <button onClick={() => { setErrorMsg(''); setStep('camera'); }} className="btn-primary text-sm">
-                  Réessayer
-                </button>
+                <button onClick={() => { setErrorMsg(''); setStep('camera'); }} className="btn-primary text-sm">Réessayer</button>
                 <button onClick={() => setStep('all-photos')}
                   className="glass px-4 py-2 rounded-xl hover:bg-white/10 transition-colors text-sm">
                   Voir toutes les photos
@@ -310,16 +294,12 @@ export default function EventClientPage({ params }: { params: { code: string } }
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {matchedPhotos.map(photo => (
-                <div key={photo._id}
-                  className="group relative rounded-xl sm:rounded-2xl overflow-hidden card-hover cursor-pointer"
-                  style={{ aspectRatio: '1' }}
-                  onClick={() => setSelectedPhoto(photo)}>
-                  <img src={photo.url} alt="" className="w-full h-full object-cover" />
+                <div key={photo._id} className="group relative rounded-xl sm:rounded-2xl overflow-hidden card-hover cursor-pointer"
+                  style={{ aspectRatio: '1' }} onClick={() => setSelectedPhoto(photo)}>
+                  <img src={thumb(photo.url)} alt="" className="w-full h-full object-cover" loading="lazy" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <button onClick={e => { e.stopPropagation(); downloadPhoto(photo.url, photo.filename); }}
-                      className="glass p-2 rounded-lg hover:bg-white/20">
-                      <Download size={16} />
-                    </button>
+                      className="glass p-2 rounded-lg hover:bg-white/20"><Download size={16} /></button>
                   </div>
                 </div>
               ))}
@@ -328,7 +308,7 @@ export default function EventClientPage({ params }: { params: { code: string } }
         </div>
       )}
 
-      {/* ─── All photos ─────────────────────────────────────────── */}
+      {/* All photos */}
       {step === 'all-photos' && (
         <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 max-w-4xl w-full mx-auto">
           <div className="flex items-center justify-between mb-6">
@@ -343,16 +323,12 @@ export default function EventClientPage({ params }: { params: { code: string } }
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {photos.map(photo => (
-              <div key={photo._id}
-                className="group relative rounded-xl sm:rounded-2xl overflow-hidden card-hover cursor-pointer"
-                style={{ aspectRatio: '1' }}
-                onClick={() => setSelectedPhoto(photo)}>
-                <img src={photo.url} alt="" className="w-full h-full object-cover" />
+              <div key={photo._id} className="group relative rounded-xl sm:rounded-2xl overflow-hidden card-hover cursor-pointer"
+                style={{ aspectRatio: '1' }} onClick={() => setSelectedPhoto(photo)}>
+                <img src={thumb(photo.url)} alt="" className="w-full h-full object-cover" loading="lazy" />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <button onClick={e => { e.stopPropagation(); downloadPhoto(photo.url, photo.filename); }}
-                    className="glass p-2 rounded-lg hover:bg-white/20">
-                    <Download size={16} />
-                  </button>
+                    className="glass p-2 rounded-lg hover:bg-white/20"><Download size={16} /></button>
                 </div>
               </div>
             ))}
@@ -360,14 +336,11 @@ export default function EventClientPage({ params }: { params: { code: string } }
         </div>
       )}
 
-      {/* ─── Lightbox ───────────────────────────────────────────── */}
+      {/* Lightbox */}
       {selectedPhoto && (
-        <div className="fixed inset-0 z-50 bg-black/95 flex flex-col"
-          onClick={() => setSelectedPhoto(null)}>
+        <div className="fixed inset-0 z-50 bg-black/95 flex flex-col" onClick={() => setSelectedPhoto(null)}>
           <div className="flex justify-between items-center p-4 flex-shrink-0" onClick={e => e.stopPropagation()}>
-            <button onClick={() => setSelectedPhoto(null)} style={{ color: 'var(--muted)' }}>
-              <X size={24} />
-            </button>
+            <button onClick={() => setSelectedPhoto(null)} style={{ color: 'var(--muted)' }}><X size={24} /></button>
             <button onClick={() => downloadPhoto(selectedPhoto.url, selectedPhoto.filename)}
               className="btn-primary flex items-center gap-2 text-sm py-2 px-4">
               <Download size={15} /> Télécharger

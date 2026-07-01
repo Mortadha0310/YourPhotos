@@ -11,8 +11,13 @@ export async function GET(req: NextRequest) {
   if (!eventId) return NextResponse.json({ error: 'eventId required' }, { status: 400 });
 
   await connectDB();
-  const photos = await Photo.find({ event: eventId }).sort({ createdAt: -1 });
-  return NextResponse.json(photos);
+  const photos = await Photo.find({ event: eventId })
+    .select('url filename faceDescriptors facesCount')
+    .sort({ createdAt: -1 })
+    .lean();
+  return NextResponse.json(photos, {
+    headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
+  });
 }
 
 export async function POST(req: NextRequest) {
