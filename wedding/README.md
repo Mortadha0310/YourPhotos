@@ -33,7 +33,7 @@ Tout se modifie dans **un seul endroit** : l'objet `WEDDING` en bas de `index.ht
 | `venueName`      | Nom de la salle                                                   |
 | `venueAddress`   | Adresse / ville                                                   |
 | `mapUrl`         | Lien Google Maps du lieu                                          |
-| `rsvpPhone`      | Numéro WhatsApp **international sans `+` ni espaces** (ex. `21620123456`) pour recevoir les confirmations |
+| `rsvpPhone`      | Numéro WhatsApp **international sans `+` ni espaces**. Format français : `33` + numéro sans le 0 (ex. `06 12 34 56 78` → `33612345678`) |
 | `families`       | Noms des familles en bas du carton                               |
 
 Le verset coranique (Ar-Rum 21) se modifie via la constante `VERSE`.

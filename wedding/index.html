@@ -324,12 +324,12 @@
             <div class="field" id="guests-field">
               <label class="field-label" for="rsvp-guests">عدد الأشخاص</label>
               <select id="rsvp-guests" class="control">
-                <option value="1">١</option>
-                <option value="2" selected>٢</option>
-                <option value="3">٣</option>
-                <option value="4">٤</option>
-                <option value="5">٥</option>
-                <option value="6">٦</option>
+                <option value="1">1</option>
+                <option value="2" selected>2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
               </select>
             </div>
             <button type="submit" class="btn btn-gold submit">إرسال التأكيد عبر واتساب</button>
@@ -360,14 +360,14 @@
        ====================================================================== */
     const WEDDING = {
       groom: 'مرتضى',          // اسم العريس
-      bride: 'أمينة',          // اسم العروسة
+      bride: 'ياسمين',         // اسم العروسة (Yassmine)
 
       intro: 'بقلوب مفعمة بالفرح والسرور، وبفضل من الله وتوفيقه، نتشرّف بدعوتكم لمشاركتنا فرحة زفاف',
 
       // Date & heure (format ISO — sert au compte à rebours)
       dateISO: '2026-09-12T19:00:00',
-      dateGregorian: 'السبت ١٢ سبتمبر ٢٠٢٦',
-      dateHijri: '٢٩ صفر ١٤٤٨ هـ',
+      dateGregorian: 'السبت 12 سبتمبر 2026',
+      dateHijri: '29 صفر 1448 هـ',
       time: 'الساعة السابعة مساءً',
 
       // Lieu
@@ -375,8 +375,10 @@
       venueAddress: 'المدينة، تونس',
       mapUrl: 'https://www.google.com/maps/search/?api=1&query=Tunis',
 
-      // Contact RSVP (numéro WhatsApp international, sans « + » ni espaces)
-      rsvpPhone: '21600000000',
+      // Contact RSVP — numéro WhatsApp international, sans « + » ni espaces.
+      // Format français : indicatif 33 + le numéro sans le 0 initial
+      // (ex. 06 12 34 56 78  ->  33612345678)
+      rsvpPhone: '33600000000',
 
       // Familles (bas du carton)
       families: 'عائلة تواتي  •  عائلة …',
@@ -384,7 +386,8 @@
 
     const VERSE = 'وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً';
 
-    const toArabicDigits = (v) => String(v).replace(/\d/g, (d) => '٠١٢٣٤٥٦٧٨٩'[+d]);
+    // Chiffres en numérotation française (occidentale) : 0 1 2 3 …
+    const formatNum = (v) => String(v);
 
     /* -------- Injection du contenu -------- */
     document.getElementById('verse').textContent = '﴿ ' + VERSE + ' ﴾';
@@ -471,7 +474,7 @@
         const cell = document.createElement('div');
         cell.className = 'cd-cell';
         cell.innerHTML =
-          '<div class="cd-num kufi">' + toArabicDigits(val) + '</div>' +
+          '<div class="cd-num kufi">' + formatNum(val) + '</div>' +
           '<div class="cd-label kufi">' + label + '</div>';
         countdownEl.appendChild(cell);
       }
