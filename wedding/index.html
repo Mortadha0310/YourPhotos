@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>دعوة زفاف · Faire-part de mariage</title>
+  <meta name="description" content="يشرّفنا حضوركم حفل زفافنا" />
+
+  <!-- Open Graph (aperçu lors du partage WhatsApp/Facebook) -->
+  <meta property="og:title" content="دعوة زفاف" />
+  <meta property="og:description" content="يشرّفنا حضوركم حفل زفافنا" />
+  <meta property="og:type" content="website" />
+
+  <!-- Polices calligraphiques arabes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Reem+Kufi:wght@400;500;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet" />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💍</text></svg>" />
+
+  <style>
+    :root {
+      --paper: #f7f1e6;
+      --paper2: #efe6d3;
+      --ink: #3a2c1a;
+      --ink-soft: #6a5638;
+      --gold: #b58e3c;
+      --gold-2: #d9b866;
+      --gold-3: #8a6a24;
+      --green: #244a3b;
+      --burgundy: #6d2436;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Amiri', 'Scheherazade New', serif;
+      color: var(--ink);
+      direction: rtl;
+      text-align: center;
+      background-color: var(--paper);
+      background-image:
+        radial-gradient(120% 120% at 50% 0%, #fbf6ec 0%, var(--paper) 45%, var(--paper2) 100%),
+        repeating-linear-gradient(45deg, rgba(181,142,60,0.035) 0 2px, transparent 2px 22px),
+        repeating-linear-gradient(-45deg, rgba(181,142,60,0.035) 0 2px, transparent 2px 22px);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(16px, 4vw, 48px) clamp(12px, 4vw, 40px);
+    }
+
+    .aref  { font-family: 'Aref Ruqaa', serif; }
+    .kufi  { font-family: 'Reem Kufi', sans-serif; }
+
+    /* Particules dorées */
+    .particle {
+      position: fixed;
+      top: -12px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--gold-2), rgba(217,184,102,0));
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1;
+      animation: fall linear infinite;
+    }
+    @keyframes fall {
+      0%   { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+      10%  { opacity: .9; }
+      90%  { opacity: .7; }
+      100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ============================ ENVELOPPE ============================ */
+    .envelope-wrap {
+      position: relative; z-index: 5;
+      display: flex; flex-direction: column; align-items: center; gap: 24px;
+      animation: rise .7s ease both;
+    }
+    .envelope {
+      position: relative;
+      width: min(360px, 82vw);
+      height: min(240px, 55vw);
+      cursor: pointer;
+      filter: drop-shadow(0 24px 40px rgba(58,44,26,.28));
+      transition: transform .3s ease;
+    }
+    .envelope:hover { transform: translateY(-4px); }
+    .env-body {
+      position: absolute; inset: 0; border-radius: 12px;
+      background: linear-gradient(150deg, #f3ebda, #e7d9bd);
+      border: 1px solid rgba(138,106,36,.35); overflow: hidden;
+    }
+    .env-body::before, .env-body::after {
+      content: ''; position: absolute; top: 0; width: 52%; height: 100%;
+      background: linear-gradient(#efe3c8, #e2d1ac);
+    }
+    .env-body::before { left: 0;  transform: skewX(18deg);  transform-origin: bottom left; }
+    .env-body::after  { right: 0; transform: skewX(-18deg); transform-origin: bottom right; }
+    .env-flap {
+      position: absolute; top: 0; left: 0; right: 0; height: 58%;
+      background: linear-gradient(160deg, #eaddc0, #ddc99f);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      transform-origin: top; transition: transform .6s cubic-bezier(.4,0,.2,1);
+      z-index: 4; border-bottom: 1px solid rgba(138,106,36,.25);
+    }
+    .seal {
+      position: absolute; top: 42%; left: 50%; transform: translate(-50%,-50%);
+      width: 66px; height: 66px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, var(--gold-2), var(--gold) 55%, var(--gold-3));
+      box-shadow: 0 4px 14px rgba(138,106,36,.5), inset 0 0 0 3px rgba(255,255,255,.25);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 6; color: #fff; font-size: 26px; transition: .4s;
+    }
+    .envelope.open .env-flap { transform: rotateX(180deg); z-index: 1; }
+    .envelope.open .seal { opacity: 0; transform: translate(-50%,-50%) scale(.4); }
+    .open-hint { font-size: clamp(15px, 4vw, 18px); color: var(--ink-soft); }
+    .tap-pulse { display: inline-block; animation: pulse 1.8s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
+
+    /* ============================== CARTON ============================= */
+    .card-wrap {
+      position: relative; z-index: 5; width: 100%; max-width: 640px;
+      animation: rise .9s ease both;
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(28px) scale(.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .hidden { display: none !important; }
+
+    .card {
+      position: relative;
+      padding: clamp(30px, 7vw, 60px) clamp(20px, 6vw, 54px);
+      background: linear-gradient(#fdf9f0, #f6eedd);
+      border-radius: 6px;
+      box-shadow: 0 30px 70px rgba(58,44,26,.25), 0 2px 0 rgba(255,255,255,.6) inset;
+    }
+    .frame { position: absolute; pointer-events: none; border: 2px solid var(--gold); }
+    .frame-outer { inset: 10px; border-radius: 4px; }
+    .frame-inner { inset: 18px; border: 1px solid rgba(181,142,60,.55); border-radius: 3px; }
+    .corner { position: absolute; width: 46px; height: 46px; color: var(--gold-3); z-index: 2; }
+    .c-tl { top: 6px; left: 6px; }
+    .c-tr { top: 6px; right: 6px; transform: scaleX(-1); }
+    .c-bl { bottom: 6px; left: 6px; transform: scaleY(-1); }
+    .c-br { bottom: 6px; right: 6px; transform: scale(-1); }
+    .inner { position: relative; z-index: 3; }
+
+    .bismillah { font-size: clamp(20px, 5.5vw, 30px); color: var(--gold-3); margin-bottom: 18px; line-height: 1.6; }
+    .verse { font-size: clamp(15px, 3.8vw, 18px); color: var(--ink-soft); line-height: 2; max-width: 30ch; margin: 0 auto 6px; }
+    .verse-ref { font-size: clamp(11px, 3vw, 13px); color: var(--gold-3); letter-spacing: .06em; }
+
+    .divider { display: flex; align-items: center; justify-content: center; gap: 12px; color: var(--gold); margin: clamp(18px,4vw,28px) auto; }
+    .divider-line { height: 1px; flex: 1; max-width: 90px; background: linear-gradient(90deg, transparent, var(--gold)); }
+    .divider-line.rev { background: linear-gradient(90deg, var(--gold), transparent); }
+
+    .kicker { font-size: clamp(13px,3.4vw,16px); letter-spacing: .12em; color: var(--burgundy); margin-bottom: 8px; }
+    .intro { font-size: clamp(14px,3.6vw,17px); color: var(--ink-soft); line-height: 1.9; margin-bottom: clamp(14px,4vw,26px); }
+
+    .names { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: clamp(6px,2vw,14px) 0; }
+    .name { font-size: clamp(34px,10vw,60px); line-height: 1.1; color: var(--green); text-shadow: 0 1px 0 rgba(255,255,255,.6); }
+    .amp { font-size: clamp(28px,8vw,46px); color: var(--gold); display: inline-flex; align-items: center; gap: 10px; }
+    .amp .heart { font-size: .7em; }
+
+    .detail-grid { display: grid; gap: clamp(12px,3vw,18px); margin: clamp(20px,5vw,32px) auto 0; max-width: 460px; }
+    .detail { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .detail-icon {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; color: var(--gold-3);
+      background: radial-gradient(circle at 35% 30%, #fff, #f0e6cf);
+      box-shadow: inset 0 0 0 1px rgba(181,142,60,.5);
+    }
+    .detail-label { font-size: clamp(11px,2.8vw,12px); letter-spacing: .1em; color: var(--gold-3); text-transform: uppercase; }
+    .detail-value { font-size: clamp(17px,4.4vw,22px); color: var(--ink); font-weight: 700; line-height: 1.4; }
+    .detail-sub { font-size: clamp(12px,3.2vw,14px); color: var(--ink-soft); }
+
+    .countdown { display: grid; grid-template-columns: repeat(4,1fr); gap: clamp(8px,2.4vw,14px); margin: clamp(22px,5vw,32px) auto 0; max-width: 420px; }
+    .cd-cell { background: linear-gradient(#fbf5e8, #f1e6cd); border: 1px solid rgba(181,142,60,.45); border-radius: 10px; padding: clamp(10px,3vw,16px) 4px; box-shadow: 0 6px 16px rgba(138,106,36,.12); }
+    .cd-num { font-size: clamp(22px,6.4vw,34px); font-weight: 700; color: var(--green); line-height: 1; }
+    .cd-label { margin-top: 6px; font-size: clamp(10px,2.8vw,12px); color: var(--gold-3); }
+    .married { margin-top: clamp(22px,5vw,32px); font-size: clamp(18px,5vw,24px); color: var(--burgundy); }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: clamp(24px,5vw,34px); }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; border-radius: 999px;
+      font-size: clamp(14px,3.6vw,15px); font-weight: 700; cursor: pointer;
+      border: 1px solid var(--gold); text-decoration: none;
+      transition: transform .15s ease, box-shadow .2s ease; font-family: 'Reem Kufi', sans-serif;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn-gold { background: linear-gradient(135deg, var(--gold-2), var(--gold) 60%, var(--gold-3)); color: #fff; border-color: transparent; box-shadow: 0 8px 20px rgba(138,106,36,.35); }
+    .btn-gold:hover { box-shadow: 0 10px 26px rgba(138,106,36,.45); }
+    .btn-outline { background: rgba(255,255,255,.4); color: var(--gold-3); }
+    .btn-outline:hover { background: rgba(255,255,255,.7); }
+
+    .rsvp { margin-top: clamp(26px,6vw,40px); padding-top: clamp(20px,5vw,30px); border-top: 1px solid rgba(181,142,60,.4); }
+    .rsvp-title { font-size: clamp(18px,5vw,24px); color: var(--green); margin-bottom: 6px; }
+    .rsvp-hint { font-size: clamp(12px,3.2vw,14px); color: var(--ink-soft); margin-bottom: 18px; }
+    .form { display: grid; gap: 12px; max-width: 420px; margin: 0 auto; text-align: right; }
+    .field { display: grid; gap: 6px; }
+    .field-label { font-size: clamp(12px,3.2vw,13px); color: var(--gold-3); font-weight: 700; font-family: 'Reem Kufi', sans-serif; }
+    .control { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(181,142,60,.5); background: #fffaf0; color: var(--ink); outline: none; font-family: inherit; font-size: 16px; transition: border-color .2s, box-shadow .2s; }
+    .control:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(181,142,60,.18); }
+    .radio-row { display: flex; gap: 10px; }
+    .radio-opt { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 10px; border: 1px solid rgba(181,142,60,.5); background: #fffaf0; cursor: pointer; font-weight: 700; color: var(--ink-soft); font-family: 'Reem Kufi', sans-serif; transition: .2s; }
+    .radio-opt input { position: absolute; opacity: 0; pointer-events: none; }
+    .radio-opt.yes.active { background: linear-gradient(135deg,#e8f2ea,#cfe4d5); border-color: var(--green); color: var(--green); }
+    .radio-opt.no.active  { background: linear-gradient(135deg,#f7e7ea,#ecccd3); border-color: var(--burgundy); color: var(--burgundy); }
+    .submit { width: 100%; justify-content: center; padding: 14px; font-size: clamp(15px,4vw,16px); margin-top: 4px; }
+    .thanks { padding: 22px; border-radius: 12px; background: linear-gradient(135deg,#e8f2ea,#d7e8dd); border: 1px solid var(--green); color: var(--green); font-size: clamp(15px,4vw,17px); line-height: 1.7; max-width: 420px; margin: 0 auto; }
+
+    .footer { margin-top: clamp(26px,6vw,38px); font-size: clamp(12px,3.2vw,14px); color: var(--ink-soft); line-height: 1.8; }
+    .footer-names { color: var(--gold-3); font-weight: 700; }
+
+    @media print {
+      body { background: #fff; padding: 0; }
+      .particle, .actions, .rsvp, .open-hint { display: none !important; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ================= ENVELOPPE ================= -->
+  <div class="envelope-wrap" id="envelope-screen">
+    <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="افتح الدعوة">
+      <div class="env-body"></div>
+      <div class="env-flap"></div>
+      <div class="seal kufi">&#10086;</div>
+    </div>
+    <p class="open-hint kufi"><span class="tap-pulse">اضغط لفتح الدعوة ✦</span></p>
+  </div>
+
+  <!-- ================= CARTON ================= -->
+  <div class="card-wrap hidden" id="card-screen">
+    <div class="card">
+      <span class="frame frame-outer"></span>
+      <span class="frame frame-inner"></span>
+
+      <svg class="corner c-tl" viewBox="0 0 46 46" fill="none" aria-hidden="true"><path d="M2 44V16C2 8 8 2 16 2h28" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M9 44V19c0-6 4-10 10-10h25" stroke="currentColor" stroke-width=".9" stroke-linecap="round" opacity=".7"/><path d="M16 16c4 0 7 1 9 4M16 16c0 4 1 7 4 9M16 16c-3-1-6-1-9 0M16 16c-1 3-1 6 0 9" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="16" cy="16" r="2.4" fill="currentColor"/></svg>
+      <svg class="corner c-tr" viewBox="0 0 46 46" fill="none" aria-hidden="true"><path d="M2 44V16C2 8 8 2 16 2h28" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M9 44V19c0-6 4-10 10-10h25" stroke="currentColor" stroke-width=".9" stroke-linecap="round" opacity=".7"/><path d="M16 16c4 0 7 1 9 4M16 16c0 4 1 7 4 9M16 16c-3-1-6-1-9 0M16 16c-1 3-1 6 0 9" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="16" cy="16" r="2.4" fill="currentColor"/></svg>
+      <svg class="corner c-bl" viewBox="0 0 46 46" fill="none" aria-hidden="true"><path d="M2 44V16C2 8 8 2 16 2h28" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M9 44V19c0-6 4-10 10-10h25" stroke="currentColor" stroke-width=".9" stroke-linecap="round" opacity=".7"/><path d="M16 16c4 0 7 1 9 4M16 16c0 4 1 7 4 9M16 16c-3-1-6-1-9 0M16 16c-1 3-1 6 0 9" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="16" cy="16" r="2.4" fill="currentColor"/></svg>
+      <svg class="corner c-br" viewBox="0 0 46 46" fill="none" aria-hidden="true"><path d="M2 44V16C2 8 8 2 16 2h28" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M9 44V19c0-6 4-10 10-10h25" stroke="currentColor" stroke-width=".9" stroke-linecap="round" opacity=".7"/><path d="M16 16c4 0 7 1 9 4M16 16c0 4 1 7 4 9M16 16c-3-1-6-1-9 0M16 16c-1 3-1 6 0 9" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="16" cy="16" r="2.4" fill="currentColor"/></svg>
+
+      <div class="inner">
+        <p class="bismillah aref">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+
+        <p class="verse" id="verse"></p>
+        <p class="verse-ref kufi">سورة الروم — الآية ٢١</p>
+
+        <div class="divider" aria-hidden="true">
+          <span class="divider-line"></span>
+          <svg width="54" height="18" viewBox="0 0 54 18" fill="none"><path d="M27 1l6 8-6 8-6-8 6-8z" stroke="currentColor" stroke-width="1.2"/><circle cx="27" cy="9" r="1.8" fill="currentColor"/><path d="M33 9h9M21 9h-9" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="44" cy="9" r="1.4" fill="currentColor"/><circle cx="10" cy="9" r="1.4" fill="currentColor"/></svg>
+          <span class="divider-line rev"></span>
+        </div>
+
+        <p class="kicker kufi">دعوة زفاف</p>
+        <p class="intro" id="intro"></p>
+
+        <div class="names">
+          <span class="name aref" id="groom"></span>
+          <span class="amp aref"><span class="heart">❧</span>و<span class="heart">❧</span></span>
+          <span class="name aref" id="bride"></span>
+        </div>
+
+        <div class="divider" aria-hidden="true">
+          <span class="divider-line"></span>
+          <svg width="54" height="18" viewBox="0 0 54 18" fill="none"><path d="M27 1l6 8-6 8-6-8 6-8z" stroke="currentColor" stroke-width="1.2"/><circle cx="27" cy="9" r="1.8" fill="currentColor"/><path d="M33 9h9M21 9h-9" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="44" cy="9" r="1.4" fill="currentColor"/><circle cx="10" cy="9" r="1.4" fill="currentColor"/></svg>
+          <span class="divider-line rev"></span>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail">
+            <span class="detail-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4.5" width="18" height="17" rx="2"/><path d="M3 9h18M8 2.5v4M16 2.5v4" stroke-linecap="round"/></svg>
+            </span>
+            <span class="detail-label kufi">الموعد</span>
+            <span class="detail-value" id="date-greg"></span>
+            <span class="detail-sub" id="date-sub"></span>
+          </div>
+          <div class="detail">
+            <span class="detail-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.6"/></svg>
+            </span>
+            <span class="detail-label kufi">المكان</span>
+            <span class="detail-value" id="venue-name"></span>
+            <span class="detail-sub" id="venue-address"></span>
+          </div>
+        </div>
+
+        <div class="countdown" id="countdown"></div>
+        <p class="married aref hidden" id="married">بارك الله لهما وبارك عليهما وجمع بينهما في خير 🤍</p>
+
+        <div class="actions">
+          <a class="btn btn-gold" id="map-btn" target="_blank" rel="noopener noreferrer">📍 موقع القاعة</a>
+          <a class="btn btn-outline" id="cal-btn" target="_blank" rel="noopener noreferrer">🗓️ أضف إلى التقويم</a>
+        </div>
+
+        <div class="rsvp">
+          <p class="rsvp-title aref">تأكيد الحضور</p>
+          <p class="rsvp-hint">نرجو تأكيد حضوركم لنتشرّف بوجودكم بيننا في هذا اليوم المميّز</p>
+
+          <form class="form" id="rsvp-form">
+            <div class="field">
+              <label class="field-label" for="rsvp-name">الاسم الكريم</label>
+              <input id="rsvp-name" class="control" placeholder="اكتب اسمك هنا" required />
+            </div>
+            <div class="field">
+              <span class="field-label">هل ستحضر؟</span>
+              <div class="radio-row">
+                <label class="radio-opt yes active" id="opt-yes">
+                  <input type="radio" name="attending" value="yes" checked /> سأحضر ✅
+                </label>
+                <label class="radio-opt no" id="opt-no">
+                  <input type="radio" name="attending" value="no" /> أعتذر 🙏
+                </label>
+              </div>
+            </div>
+            <div class="field" id="guests-field">
+              <label class="field-label" for="rsvp-guests">عدد الأشخاص</label>
+              <select id="rsvp-guests" class="control">
+                <option value="1">١</option>
+                <option value="2" selected>٢</option>
+                <option value="3">٣</option>
+                <option value="4">٤</option>
+                <option value="5">٥</option>
+                <option value="6">٦</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-gold submit">إرسال التأكيد عبر واتساب</button>
+          </form>
+
+          <div class="thanks hidden" id="thanks">
+            شكراً جزيلاً لكم 🤍<br />تمّ فتح واتساب لإرسال تأكيدكم — بانتظاركم بكل الحب.
+          </div>
+        </div>
+
+        <div class="divider" aria-hidden="true">
+          <span class="divider-line"></span>
+          <svg width="54" height="18" viewBox="0 0 54 18" fill="none"><path d="M27 1l6 8-6 8-6-8 6-8z" stroke="currentColor" stroke-width="1.2"/><circle cx="27" cy="9" r="1.8" fill="currentColor"/><path d="M33 9h9M21 9h-9" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="44" cy="9" r="1.4" fill="currentColor"/><circle cx="10" cy="9" r="1.4" fill="currentColor"/></svg>
+          <span class="divider-line rev"></span>
+        </div>
+
+        <p class="footer">
+          <span class="kufi">بكل الحب والتقدير</span><br />
+          <span class="footer-names aref" id="families"></span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ======================================================================
+       ✏️  MODIFIEZ ICI TOUTES LES INFORMATIONS DU MARIAGE
+       ====================================================================== */
+    const WEDDING = {
+      groom: 'مرتضى',          // اسم العريس
+      bride: 'أمينة',          // اسم العروسة
+
+      intro: 'بقلوب مفعمة بالفرح والسرور، وبفضل من الله وتوفيقه، نتشرّف بدعوتكم لمشاركتنا فرحة زفاف',
+
+      // Date & heure (format ISO — sert au compte à rebours)
+      dateISO: '2026-09-12T19:00:00',
+      dateGregorian: 'السبت ١٢ سبتمبر ٢٠٢٦',
+      dateHijri: '٢٩ صفر ١٤٤٨ هـ',
+      time: 'الساعة السابعة مساءً',
+
+      // Lieu
+      venueName: 'قصر الأفراح ياسمين',
+      venueAddress: 'المدينة، تونس',
+      mapUrl: 'https://www.google.com/maps/search/?api=1&query=Tunis',
+
+      // Contact RSVP (numéro WhatsApp international, sans « + » ni espaces)
+      rsvpPhone: '21600000000',
+
+      // Familles (bas du carton)
+      families: 'عائلة تواتي  •  عائلة …',
+    };
+
+    const VERSE = 'وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً';
+
+    const toArabicDigits = (v) => String(v).replace(/\d/g, (d) => '٠١٢٣٤٥٦٧٨٩'[+d]);
+
+    /* -------- Injection du contenu -------- */
+    document.getElementById('verse').textContent = '﴿ ' + VERSE + ' ﴾';
+    document.getElementById('intro').textContent = WEDDING.intro;
+    document.getElementById('groom').textContent = WEDDING.groom;
+    document.getElementById('bride').textContent = WEDDING.bride;
+    document.getElementById('date-greg').textContent = WEDDING.dateGregorian;
+    document.getElementById('date-sub').textContent = WEDDING.dateHijri + ' — ' + WEDDING.time;
+    document.getElementById('venue-name').textContent = WEDDING.venueName;
+    document.getElementById('venue-address').textContent = WEDDING.venueAddress;
+    document.getElementById('families').textContent = WEDDING.families;
+    document.getElementById('map-btn').href = WEDDING.mapUrl;
+    document.title = 'دعوة زفاف · ' + WEDDING.groom + ' و ' + WEDDING.bride;
+
+    /* -------- Lien « Ajouter au calendrier » -------- */
+    (function () {
+      const start = new Date(WEDDING.dateISO);
+      const end = new Date(start.getTime() + 4 * 3600000);
+      const fmt = (d) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+      const params = new URLSearchParams({
+        action: 'TEMPLATE',
+        text: 'زفاف ' + WEDDING.groom + ' و ' + WEDDING.bride,
+        dates: fmt(start) + '/' + fmt(end),
+        location: WEDDING.venueName + '، ' + WEDDING.venueAddress,
+        details: 'يشرّفنا حضوركم',
+      });
+      document.getElementById('cal-btn').href =
+        'https://www.google.com/calendar/render?' + params.toString();
+    })();
+
+    /* -------- Particules dorées -------- */
+    (function () {
+      const P = [
+        ['6%','0s','11s',7], ['18%','3s','14s',5], ['30%','6s','12s',8], ['43%','1.5s','15s',4],
+        ['55%','4.5s','13s',6], ['67%','2s','16s',5], ['79%','5.5s','11.5s',8], ['90%','.8s','13.5s',6],
+      ];
+      const frag = document.createDocumentFragment();
+      for (const [left, delay, dur, size] of P) {
+        const s = document.createElement('span');
+        s.className = 'particle';
+        s.style.left = left;
+        s.style.width = s.style.height = size + 'px';
+        s.style.animationDelay = delay;
+        s.style.animationDuration = dur;
+        frag.appendChild(s);
+      }
+      document.body.appendChild(frag);
+    })();
+
+    /* -------- Ouverture de l'enveloppe -------- */
+    const envelope = document.getElementById('envelope');
+    const openInvitation = () => {
+      if (envelope.classList.contains('open')) return;
+      envelope.classList.add('open');
+      setTimeout(() => {
+        document.getElementById('envelope-screen').classList.add('hidden');
+        document.getElementById('card-screen').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 650);
+    };
+    envelope.addEventListener('click', openInvitation);
+    envelope.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openInvitation(); }
+    });
+
+    /* -------- Compte à rebours -------- */
+    const target = new Date(WEDDING.dateISO).getTime();
+    const countdownEl = document.getElementById('countdown');
+    const marriedEl = document.getElementById('married');
+    const UNITS = [['يوم',86400000],['ساعة',3600000],['دقيقة',60000],['ثانية',1000]];
+
+    function renderCountdown() {
+      const diff = target - Date.now();
+      if (diff <= 0) {
+        countdownEl.classList.add('hidden');
+        marriedEl.classList.remove('hidden');
+        return;
+      }
+      countdownEl.innerHTML = '';
+      let rem = diff;
+      for (const [label, ms] of UNITS) {
+        const val = Math.floor(rem / ms);
+        rem -= val * ms;
+        const cell = document.createElement('div');
+        cell.className = 'cd-cell';
+        cell.innerHTML =
+          '<div class="cd-num kufi">' + toArabicDigits(val) + '</div>' +
+          '<div class="cd-label kufi">' + label + '</div>';
+        countdownEl.appendChild(cell);
+      }
+    }
+    renderCountdown();
+    setInterval(renderCountdown, 1000);
+
+    /* -------- RSVP -------- */
+    const optYes = document.getElementById('opt-yes');
+    const optNo = document.getElementById('opt-no');
+    const guestsField = document.getElementById('guests-field');
+    function syncAttending() {
+      const yes = document.querySelector('input[name="attending"]:checked').value === 'yes';
+      optYes.classList.toggle('active', yes);
+      optNo.classList.toggle('active', !yes);
+      guestsField.style.display = yes ? '' : 'none';
+    }
+    optYes.querySelector('input').addEventListener('change', syncAttending);
+    optNo.querySelector('input').addEventListener('change', syncAttending);
+    syncAttending();
+
+    document.getElementById('rsvp-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('rsvp-name').value.trim();
+      const attending = document.querySelector('input[name="attending"]:checked').value;
+      const guests = document.getElementById('rsvp-guests').value;
+      const status = attending === 'yes' ? 'سأحضر بإذن الله ✅' : 'أعتذر عن الحضور 🙏';
+      const lines = [
+        'تأكيد حضور زفاف ' + WEDDING.groom + ' و ' + WEDDING.bride,
+        'الاسم: ' + (name || '—'),
+        'الحالة: ' + status,
+      ];
+      if (attending === 'yes') lines.push('عدد الأشخاص: ' + guests);
+      const url = 'https://wa.me/' + WEDDING.rsvpPhone + '?text=' + encodeURIComponent(lines.join('\n'));
+      window.open(url, '_blank', 'noopener,noreferrer');
+      document.getElementById('rsvp-form').classList.add('hidden');
+      document.getElementById('thanks').classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>
