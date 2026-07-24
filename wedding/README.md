@@ -2,7 +2,7 @@
 
 Un site d'invitation de mariage **autonome**, au style d'un faire-part papier arabe :
 fond ivoire, cadre doré ornementé, calligraphie arabe, enveloppe qui s'ouvre,
-compte à rebours et confirmation de présence (RSVP) via WhatsApp.
+programme des événements et compte à rebours animé.
 
 > Projet **indépendant** — il n'a aucun lien avec l'application PhotoShare du dépôt.
 > Un seul fichier, sans build, sans dépendances.
@@ -25,16 +25,14 @@ Tout se modifie dans **un seul endroit** : l'objet `WEDDING` en bas de `index.ht
 | Champ            | Description                                                       |
 | ---------------- | ----------------------------------------------------------------- |
 | `groom` / `bride`| Prénoms des mariés (arabe)                                         |
-| `intro`          | Phrase d'invitation au-dessus des prénoms                         |
-| `dateISO`        | Date + heure au format `AAAA-MM-JJTHH:MM:SS` (compte à rebours + calendrier) |
-| `dateGregorian`  | Date affichée (grégorienne, en arabe)                             |
-| `dateHijri`      | Date hégirienne affichée                                          |
-| `time`           | Heure affichée                                                    |
-| `venueName`      | Nom de la salle                                                   |
-| `venueAddress`   | Adresse / ville                                                   |
-| `mapUrl`         | Lien Google Maps du lieu                                          |
-| `rsvpPhone`      | Numéro WhatsApp **international sans `+` ni espaces**. Format français : `33` + numéro sans le 0 (ex. `06 12 34 56 78` → `33612345678`) |
-| `families`       | Noms des familles en bas du carton                               |
+| `parents`        | Les deux pères (bas de la phrase d'invitation)                    |
+| `introTop` / `introBottom` | Phrases d'invitation autour des noms des familles      |
+| `dateRange`      | Plage de dates affichée en tête                                   |
+| `events`         | **Programme** : tableau d'événements `{ icon, title, day, time, venue }`. `icon` ∈ `dinner` / `henna` / `rings` |
+| `dateISO`        | Date + heure du mariage `AAAA-MM-JJTHH:MM:SS` (compte à rebours + calendrier) |
+| `venueWedding`   | Nom de la salle du mariage (bouton « موقع »)                      |
+| `mapUrl`         | Lien Google Maps du lieu du mariage                               |
+| `closing`        | Phrase de clôture (bas du carton)                                 |
 
 Le verset coranique (Ar-Rum 21) se modifie via la constante `VERSE`.
 
@@ -42,10 +40,12 @@ Le verset coranique (Ar-Rum 21) se modifie via la constante `VERSE`.
 
 - 💌 Enveloppe animée qui s'ouvre au clic
 - 🕌 Bismillah + verset coranique en calligraphie
-- 💍 Noms des mariés, date (grégorienne + hégirienne), lieu
-- ⏳ Compte à rebours en direct (chiffres arabes ٠١٢٣…)
+- 💍 Noms des mariés et des deux familles
+- 📜 **Programme** des événements (dîner, henné, mariage) avec jour, heure et salle
+- ⏳ Compte à rebours en direct jusqu'au mariage (chiffres occidentaux)
 - 📍 Bouton « localisation » (Google Maps) et 🗓️ « ajouter au calendrier »
-- ✅ RSVP : le formulaire ouvre WhatsApp avec un message pré-rempli vers `rsvpPhone`
+- ✨ Animations : enveloppe flottante, sceau pulsé, révélation en cascade, cœurs
+  battants, particules dorées et pétales (désactivées si `prefers-reduced-motion`)
 - 🖨️ Imprimable (mise en page propre en `@media print`)
 - 📱 Responsive (mobile / tablette / bureau), RTL
 
