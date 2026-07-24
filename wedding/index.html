@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>دعوة زفاف — مرتضى و ياسمين</title>
+  <meta name="description" content="يشرّفنا حضوركم حفل زفاف مرتضى و ياسمين" />
+
+  <meta property="og:title" content="دعوة زفاف — مرتضى و ياسمين" />
+  <meta property="og:description" content="يشرّفنا حضوركم حفل زفافنا" />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Reem+Kufi:wght@400;500;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet" />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💍</text></svg>" />
+
+  <style>
+    :root {
+      --paper: #f7f1e6;
+      --paper2: #efe6d3;
+      --ink: #3a2c1a;
+      --ink-soft: #6a5638;
+      --gold: #b58e3c;
+      --gold-2: #d9b866;
+      --gold-3: #8a6a24;
+      --green: #244a3b;
+      --burgundy: #6d2436;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'Amiri', 'Scheherazade New', serif;
+      color: var(--ink);
+      direction: rtl;
+      text-align: center;
+      background-color: var(--paper);
+      background-image:
+        radial-gradient(120% 120% at 50% 0%, #fbf6ec 0%, var(--paper) 45%, var(--paper2) 100%),
+        repeating-linear-gradient(45deg, rgba(181,142,60,0.035) 0 2px, transparent 2px 22px),
+        repeating-linear-gradient(-45deg, rgba(181,142,60,0.035) 0 2px, transparent 2px 22px);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(16px, 4vw, 48px) clamp(12px, 4vw, 40px);
+    }
+
+    .aref { font-family: 'Aref Ruqaa', serif; }
+    .kufi { font-family: 'Reem Kufi', sans-serif; }
+
+    /* Particules & pétales */
+    .particle, .petal {
+      position: fixed; top: -14px; opacity: 0; pointer-events: none; z-index: 1;
+    }
+    .particle {
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--gold-2), rgba(217,184,102,0));
+      animation: fall linear infinite;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-20px) rotate(0); opacity: 0; }
+      10% { opacity: .9; } 90% { opacity: .7; }
+      100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+    }
+    .petal {
+      background: radial-gradient(circle at 30% 30%, #f7e9ec, #e7c6d0);
+      border-radius: 0 100% 0 100%;
+      animation: petalFall linear infinite;
+    }
+    @keyframes petalFall {
+      0% { transform: translateY(-24px) translateX(0) rotate(0); opacity: 0; }
+      10% { opacity: .85; }
+      50% { transform: translateY(46vh) translateX(26px) rotate(180deg); }
+      90% { opacity: .65; }
+      100% { transform: translateY(103vh) translateX(-18px) rotate(360deg); opacity: 0; }
+    }
+
+    /* ============================ ENVELOPPE ============================ */
+    .envelope-wrap {
+      position: relative; z-index: 5;
+      display: flex; flex-direction: column; align-items: center; gap: 24px;
+      animation: rise .7s ease both;
+    }
+    .envelope {
+      position: relative;
+      width: min(360px, 82vw); height: min(240px, 55vw);
+      cursor: pointer;
+      filter: drop-shadow(0 24px 40px rgba(58,44,26,.28));
+      animation: floaty 3.4s ease-in-out infinite;
+      transition: filter .3s ease;
+    }
+    .envelope:hover { filter: drop-shadow(0 30px 48px rgba(58,44,26,.34)) brightness(1.03); }
+    @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+    .env-body {
+      position: absolute; inset: 0; border-radius: 12px;
+      background: linear-gradient(150deg, #f3ebda, #e7d9bd);
+      border: 1px solid rgba(138,106,36,.35); overflow: hidden;
+    }
+    .env-body::before, .env-body::after {
+      content: ''; position: absolute; top: 0; width: 52%; height: 100%;
+      background: linear-gradient(#efe3c8, #e2d1ac);
+    }
+    .env-body::before { left: 0; transform: skewX(18deg); transform-origin: bottom left; }
+    .env-body::after { right: 0; transform: skewX(-18deg); transform-origin: bottom right; }
+    .env-flap {
+      position: absolute; top: 0; left: 0; right: 0; height: 58%;
+      background: linear-gradient(160deg, #eaddc0, #ddc99f);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      transform-origin: top; transition: transform .6s cubic-bezier(.4,0,.2,1);
+      z-index: 4; border-bottom: 1px solid rgba(138,106,36,.25);
+    }
+    .seal {
+      position: absolute; top: 42%; left: 50%; transform: translate(-50%,-50%);
+      width: 66px; height: 66px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, var(--gold-2), var(--gold) 55%, var(--gold-3));
+      display: flex; align-items: center; justify-content: center;
+      z-index: 6; color: #fff; font-size: 26px;
+      animation: sealPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes sealPulse {
+      0%,100% { box-shadow: 0 4px 14px rgba(138,106,36,.5), inset 0 0 0 3px rgba(255,255,255,.25); }
+      50% { box-shadow: 0 6px 24px rgba(181,142,60,.85), inset 0 0 0 3px rgba(255,255,255,.45); }
+    }
+    .envelope.open .env-flap { transform: rotateX(180deg); z-index: 1; }
+    .envelope.open .seal { opacity: 0; transform: translate(-50%,-50%) scale(.4); transition: .4s; }
+    .open-hint { font-size: clamp(15px, 4vw, 18px); color: var(--ink-soft); }
+    .tap-pulse { display: inline-block; animation: pulse 1.8s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
+
+    /* ============================== CARTON ============================= */
+    .card-wrap {
+      position: relative; z-index: 5; width: 100%; max-width: 640px;
+      animation: rise .9s ease both;
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(28px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .hidden { display: none !important; }
+
+    .card {
+      position: relative;
+      padding: clamp(30px, 7vw, 60px) clamp(20px, 6vw, 54px);
+      background: linear-gradient(#fdf9f0, #f6eedd);
+      border-radius: 6px;
+      box-shadow: 0 30px 70px rgba(58,44,26,.25), 0 2px 0 rgba(255,255,255,.6) inset;
+    }
+    .frame { position: absolute; pointer-events: none; border: 2px solid var(--gold); }
+    .frame-outer { inset: 10px; border-radius: 4px; }
+    .frame-inner { inset: 18px; border: 1px solid rgba(181,142,60,.55); border-radius: 3px; }
+    .corner { position: absolute; width: 46px; height: 46px; color: var(--gold-3); z-index: 2; }
+    .c-tl { top: 6px; left: 6px; }
+    .c-tr { top: 6px; right: 6px; transform: scaleX(-1); }
+    .c-bl { bottom: 6px; left: 6px; transform: scaleY(-1); }
+    .c-br { bottom: 6px; right: 6px; transform: scale(-1); }
+    .inner { position: relative; z-index: 3; }
+
+    /* Révélation en cascade des blocs à l'ouverture */
+    .inner > * { opacity: 0; animation: fadeUp .8s cubic-bezier(.2,.7,.3,1) both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+    .inner > *:nth-child(1) { animation-delay: .05s; }
+    .inner > *:nth-child(2) { animation-delay: .15s; }
+    .inner > *:nth-child(3) { animation-delay: .25s; }
+    .inner > *:nth-child(4) { animation-delay: .35s; }
+    .inner > *:nth-child(5) { animation-delay: .45s; }
+    .inner > *:nth-child(6) { animation-delay: .55s; }
+    .inner > *:nth-child(7) { animation-delay: .65s; }
+    .inner > *:nth-child(8) { animation-delay: .75s; }
+    .inner > *:nth-child(9) { animation-delay: .85s; }
+    .inner > *:nth-child(10) { animation-delay: .95s; }
+    .inner > *:nth-child(11) { animation-delay: 1.05s; }
+    .inner > *:nth-child(12) { animation-delay: 1.15s; }
+
+    .bismillah { font-size: clamp(20px, 5.5vw, 30px); color: var(--gold-3); margin-bottom: 18px; line-height: 1.6; }
+    .verse { font-size: clamp(15px, 3.8vw, 18px); color: var(--ink-soft); line-height: 2; max-width: 32ch; margin: 0 auto 6px; }
+    .sadaqa { font-size: clamp(13px, 3.4vw, 15px); color: var(--gold-3); margin-top: 4px; }
+    .verse-ref { font-size: clamp(11px, 3vw, 13px); color: var(--gold-3); letter-spacing: .06em; margin-top: 2px; }
+
+    .divider { display: flex; align-items: center; justify-content: center; gap: 12px; color: var(--gold); margin: clamp(18px,4vw,28px) auto; }
+    .divider-line { height: 1px; flex: 1; max-width: 90px; background: linear-gradient(90deg, transparent, var(--gold)); }
+    .divider-line.rev { background: linear-gradient(90deg, var(--gold), transparent); }
+    .divider svg { animation: beat 2.4s ease-in-out infinite; }
+    @keyframes beat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+
+    .intro { font-size: clamp(14px, 3.6vw, 17px); color: var(--ink-soft); line-height: 1.9; }
+    .parents { font-size: clamp(17px, 4.6vw, 22px); color: var(--ink); font-weight: 700; margin: 10px 0; }
+    .intro-block > * + * { margin-top: 4px; }
+
+    .names { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: clamp(6px,2vw,14px) 0; }
+    .name { font-size: clamp(34px,10vw,60px); line-height: 1.1; color: var(--green); text-shadow: 0 1px 0 rgba(255,255,255,.6); animation: glow 3.6s ease-in-out infinite; }
+    @keyframes glow {
+      0%,100% { text-shadow: 0 1px 0 rgba(255,255,255,.6); }
+      50% { text-shadow: 0 0 20px rgba(181,142,60,.45), 0 1px 0 rgba(255,255,255,.6); }
+    }
+    .amp { font-size: clamp(28px,8vw,46px); color: var(--gold); display: inline-flex; align-items: center; gap: 10px; }
+    .amp .heart { font-size: .7em; animation: beat 1.7s ease-in-out infinite; }
+
+    .willah { font-size: clamp(13px,3.4vw,15px); color: var(--ink-soft); }
+    .date-range { font-size: clamp(22px,6.6vw,34px); color: var(--burgundy); font-weight: 700; margin-top: 6px; letter-spacing: .01em; }
+
+    /* ============================ PROGRAMME ============================ */
+    .program-title { font-size: clamp(15px,4vw,19px); letter-spacing: .1em; color: var(--gold-3); margin-bottom: 4px; }
+    .timeline { display: grid; gap: clamp(12px,3vw,16px); max-width: 500px; margin: 16px auto 0; }
+    .event {
+      display: flex; gap: 14px; align-items: flex-start; text-align: right;
+      background: linear-gradient(#fbf5e8, #f3e9d1);
+      border: 1px solid rgba(181,142,60,.4); border-radius: 14px;
+      padding: clamp(14px,3.5vw,18px);
+      box-shadow: 0 6px 16px rgba(138,106,36,.1);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    @media (hover: hover) { .event:hover { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(138,106,36,.18); } }
+    .event-icon {
+      flex-shrink: 0; width: 46px; height: 46px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; color: #fff;
+      background: linear-gradient(135deg, var(--gold-2), var(--gold-3));
+      box-shadow: 0 4px 10px rgba(138,106,36,.3);
+    }
+    .event-body { flex: 1; }
+    .event-title { font-size: clamp(17px,4.4vw,21px); color: var(--green); font-weight: 700; margin-bottom: 5px; }
+    .event-line { font-size: clamp(13px,3.4vw,15px); color: var(--ink-soft); line-height: 1.7; }
+    .event-line b { color: var(--burgundy); font-weight: 700; }
+
+    .countdown { display: grid; grid-template-columns: repeat(4,1fr); gap: clamp(8px,2.4vw,14px); margin: clamp(22px,5vw,32px) auto 0; max-width: 420px; }
+    .cd-cell { background: linear-gradient(#fbf5e8, #f1e6cd); border: 1px solid rgba(181,142,60,.45); border-radius: 10px; padding: clamp(10px,3vw,16px) 4px; box-shadow: 0 6px 16px rgba(138,106,36,.12); }
+    .cd-num { font-size: clamp(22px,6.4vw,34px); font-weight: 700; color: var(--green); line-height: 1; font-variant-numeric: tabular-nums; }
+    .cd-label { margin-top: 6px; font-size: clamp(10px,2.8vw,12px); color: var(--gold-3); }
+    .married { margin-top: clamp(22px,5vw,32px); font-size: clamp(18px,5vw,24px); color: var(--burgundy); }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: clamp(24px,5vw,34px); }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; border-radius: 999px;
+      font-size: clamp(14px,3.6vw,15px); font-weight: 700; cursor: pointer;
+      border: 1px solid var(--gold); text-decoration: none;
+      transition: transform .15s ease, box-shadow .2s ease; font-family: 'Reem Kufi', sans-serif;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn-gold {
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, var(--gold-2), var(--gold) 60%, var(--gold-3));
+      color: #fff; border-color: transparent; box-shadow: 0 8px 20px rgba(138,106,36,.35);
+    }
+    .btn-gold::after {
+      content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+      background: linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent);
+      transform: skewX(-18deg); animation: shimmer 3.2s ease-in-out infinite;
+    }
+    @keyframes shimmer { 0% { left: -60%; } 55%,100% { left: 130%; } }
+    .btn-gold:hover { box-shadow: 0 10px 26px rgba(138,106,36,.45); }
+    .btn-outline { background: rgba(255,255,255,.4); color: var(--gold-3); }
+    .btn-outline:hover { background: rgba(255,255,255,.7); }
+
+    .footer { margin-top: clamp(26px,6vw,38px); line-height: 1.9; }
+    .footer-phrase { font-size: clamp(16px,4.4vw,21px); color: var(--burgundy); }
+    .footer-couple { font-size: clamp(14px,3.6vw,16px); color: var(--gold-3); font-weight: 700; margin-top: 6px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition: none !important; }
+      .inner > * { opacity: 1 !important; }
+      .particle, .petal { display: none !important; }
+    }
+
+    @media print {
+      body { background: #fff; padding: 0; }
+      .particle, .petal, .actions, .open-hint { display: none !important; }
+      .card { box-shadow: none; }
+      .inner > * { opacity: 1 !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ================= ENVELOPPE ================= -->
+  <div class="envelope-wrap" id="envelope-screen">
+    <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="افتح الدعوة">
+      <div class="env-body"></div>
+      <div class="env-flap"></div>
+      <div class="seal kufi">&#10086;</div>
+    </div>
+    <p class="open-hint kufi"><span class="tap-pulse">اضغط لفتح الدعوة ✦</span></p>
+  </div>
+
+  <!-- ================= CARTON ================= -->
+  <div class="card-wrap hidden" id="card-screen">
+    <div class="card">
+      <span class="frame frame-outer"></span>
+      <span class="frame frame-inner"></span>
+
+      <svg class="corner c-tl" viewBox="0 0 46 46" fill="none" aria-hidden="true"><path d="M2 44V16C2 8 8 2 16 2h28" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M9 44V19c0-6 4-10 10-10h25" stroke="currentColor" stroke-width=".9" stroke-linecap="round" opacity=".7"/><path d="M16 16c4 0 7 1 9 4M16 16c0 4 1 7 4 9M16 16c-3-1-6-1-9 0M16 16c-1 3-1 6 0 9" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="16" cy="16" r="2.4" fill="currentColor"/></svg>
+      <svg class="corner c-tr" viewBox="0 0 46 46" fill="none" aria-hidden="true"><path d="M2 44V16C2 8 8 2 16 2h28" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M9 44V19c0-6 4-10 10-10h25" stroke="currentColor" stroke-width=".9" stroke-linecap="round" opacity=".7"/><path d="M16 16c4 0 7 1 9 4M16 16c0 4 1 7 4 9M16 16c-3-1-6-1-9 0M16 16c-1 3-1 6 0 9" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="16" cy="16" r="2.4" fill="currentColor"/></svg>
+      <svg class="corner c-bl" viewBox="0 0 46 46" fill="none" aria-hidden="true"><path d="M2 44V16C2 8 8 2 16 2h28" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M9 44V19c0-6 4-10 10-10h25" stroke="currentColor" stroke-width=".9" stroke-linecap="round" opacity=".7"/><path d="M16 16c4 0 7 1 9 4M16 16c0 4 1 7 4 9M16 16c-3-1-6-1-9 0M16 16c-1 3-1 6 0 9" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="16" cy="16" r="2.4" fill="currentColor"/></svg>
+      <svg class="corner c-br" viewBox="0 0 46 46" fill="none" aria-hidden="true"><path d="M2 44V16C2 8 8 2 16 2h28" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M9 44V19c0-6 4-10 10-10h25" stroke="currentColor" stroke-width=".9" stroke-linecap="round" opacity=".7"/><path d="M16 16c4 0 7 1 9 4M16 16c0 4 1 7 4 9M16 16c-3-1-6-1-9 0M16 16c-1 3-1 6 0 9" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="16" cy="16" r="2.4" fill="currentColor"/></svg>
+
+      <div class="inner">
+        <!-- 1 -->
+        <p class="bismillah aref">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+
+        <!-- 2 -->
+        <div>
+          <p class="verse" id="verse"></p>
+          <p class="sadaqa">صَدَقَ اللَّهُ العَظِيم</p>
+          <p class="verse-ref kufi">سورة الروم — الآية 21</p>
+        </div>
+
+        <!-- 3 -->
+        <div class="divider" aria-hidden="true">
+          <span class="divider-line"></span>
+          <svg width="54" height="18" viewBox="0 0 54 18" fill="none"><path d="M27 1l6 8-6 8-6-8 6-8z" stroke="currentColor" stroke-width="1.2"/><circle cx="27" cy="9" r="1.8" fill="currentColor"/><path d="M33 9h9M21 9h-9" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="44" cy="9" r="1.4" fill="currentColor"/><circle cx="10" cy="9" r="1.4" fill="currentColor"/></svg>
+          <span class="divider-line rev"></span>
+        </div>
+
+        <!-- 4 -->
+        <div class="intro-block">
+          <p class="intro" id="intro-top"></p>
+          <p class="parents aref" id="parents"></p>
+          <p class="intro" id="intro-bottom"></p>
+        </div>
+
+        <!-- 5 -->
+        <div class="names">
+          <span class="name aref" id="groom"></span>
+          <span class="amp aref"><span class="heart">❧</span>&amp;<span class="heart">❧</span></span>
+          <span class="name aref" id="bride"></span>
+        </div>
+
+        <!-- 6 -->
+        <div>
+          <p class="willah">وذلك بمشيئة الله</p>
+          <p class="date-range" id="date-range"></p>
+        </div>
+
+        <!-- 7 -->
+        <div class="divider" aria-hidden="true">
+          <span class="divider-line"></span>
+          <svg width="54" height="18" viewBox="0 0 54 18" fill="none"><path d="M27 1l6 8-6 8-6-8 6-8z" stroke="currentColor" stroke-width="1.2"/><circle cx="27" cy="9" r="1.8" fill="currentColor"/><path d="M33 9h9M21 9h-9" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="44" cy="9" r="1.4" fill="currentColor"/><circle cx="10" cy="9" r="1.4" fill="currentColor"/></svg>
+          <span class="divider-line rev"></span>
+        </div>
+
+        <!-- 8 : Programme -->
+        <div>
+          <p class="program-title kufi">برنامج الحفل</p>
+          <div class="timeline" id="timeline"></div>
+        </div>
+
+        <!-- 9 : Compte à rebours -->
+        <div>
+          <p class="program-title kufi" style="margin-top:6px">إلى أن يجمعنا هذا اليوم</p>
+          <div class="countdown" id="countdown"></div>
+          <p class="married aref hidden" id="married">بارك الله لهما وبارك عليهما وجمع بينهما في خير 🤍</p>
+        </div>
+
+        <!-- 10 : Actions -->
+        <div class="actions">
+          <a class="btn btn-gold" id="map-btn" target="_blank" rel="noopener noreferrer">📍 موقع قاعة الزفاف</a>
+          <a class="btn btn-outline" id="cal-btn" target="_blank" rel="noopener noreferrer">🗓️ أضف إلى التقويم</a>
+        </div>
+
+        <!-- 11 -->
+        <div class="divider" aria-hidden="true">
+          <span class="divider-line"></span>
+          <svg width="54" height="18" viewBox="0 0 54 18" fill="none"><path d="M27 1l6 8-6 8-6-8 6-8z" stroke="currentColor" stroke-width="1.2"/><circle cx="27" cy="9" r="1.8" fill="currentColor"/><path d="M33 9h9M21 9h-9" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="44" cy="9" r="1.4" fill="currentColor"/><circle cx="10" cy="9" r="1.4" fill="currentColor"/></svg>
+          <span class="divider-line rev"></span>
+        </div>
+
+        <!-- 12 -->
+        <div class="footer">
+          <p class="footer-phrase aref" id="closing"></p>
+          <p class="footer-couple">مرتضى ♡ ياسمين</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ======================================================================
+       ✏️  MODIFIEZ ICI TOUTES LES INFORMATIONS DU MARIAGE
+       ====================================================================== */
+    const WEDDING = {
+      groom: 'مرتضى',           // اسم العريس (Mortadha)
+      bride: 'ياسمين',          // اسم العروسة (Yassmine)
+
+      // Familles (les deux pères)
+      parents: 'منجي التواتي  و  عماد حتيرة',
+      introTop: 'بعد إهدائكم عاطر التحية وأزكى السلام تتشرف عائلتا',
+      introBottom: 'بدعوتكم لحضور عقد زواج وحفل زفاف ابنيهما',
+
+      // Plage de dates affichée en tête
+      dateRange: '21 – 22 أوت 2026',
+
+      // Programme des événements
+      events: [
+        { icon: 'dinner', title: 'مأدبة عشاء العروسة', day: 'يوم الجمعة 21 أوت 2026', time: 'بداية من الساعة الخامسة مساءً', venue: 'بقاعة « المركيز »' },
+        { icon: 'henna',  title: 'حنة العروسة',        day: 'يوم الجمعة 21 أوت 2026', time: 'بداية من الساعة التاسعة مساءً', venue: 'بقاعة « المركيز »' },
+        { icon: 'rings',  title: 'عقد القران و حفل الزفاف', day: 'يوم السبت 22 أوت 2026', time: 'بداية من الساعة التاسعة مساءً', venue: 'بقاعة « دار زمان 2 عنتر »' },
+      ],
+
+      // Mariage principal (compte à rebours + calendrier)
+      dateISO: '2026-08-22T21:00:00',
+
+      // Lieu du mariage (bouton « موقع »)
+      venueWedding: 'دار زمان 2 عنتر',
+      mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('دار زمان 2 عنتر'),
+
+      // Phrase de clôture
+      closing: 'ولكم العاقبة في الأفراح والمسرات',
+    };
+
+    const VERSE = 'وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ۚ إِنَّ فِي ذَٰلِكَ لَآيَاتٍ لِّقَوْمٍ يَتَفَكَّرُونَ';
+
+    const formatNum = (v) => String(v); // chiffres occidentaux (français)
+
+    /* Icônes SVG par type d'événement */
+    const ICONS = {
+      dinner: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 002 2h0V3M6 3v18M16 3c-1.5 0-3 1.5-3 5s1.5 5 3 5V3zm0 10v8"/></svg>',
+      henna:  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c4.5-3 7-6 7-10a3 3 0 00-6 0 3 3 0 00-6 0c0 4 2.5 7 5 10z"/><path d="M12 11v4"/></svg>',
+      rings:  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="14" r="5"/><circle cx="15" cy="14" r="5"/><path d="M9 4l1.5 2h3L15 4M9 4h6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    };
+
+    /* -------- Injection du contenu -------- */
+    document.getElementById('verse').textContent = '﴿ ' + VERSE + ' ﴾';
+    document.getElementById('intro-top').textContent = WEDDING.introTop;
+    document.getElementById('parents').textContent = WEDDING.parents;
+    document.getElementById('intro-bottom').textContent = WEDDING.introBottom;
+    document.getElementById('groom').textContent = WEDDING.groom;
+    document.getElementById('bride').textContent = WEDDING.bride;
+    document.getElementById('date-range').textContent = WEDDING.dateRange;
+    document.getElementById('closing').textContent = WEDDING.closing;
+    const mapBtn = document.getElementById('map-btn');
+    mapBtn.href = WEDDING.mapUrl;
+    mapBtn.textContent = '📍 موقع ' + WEDDING.venueWedding;
+    document.title = 'دعوة زفاف — ' + WEDDING.groom + ' و ' + WEDDING.bride;
+
+    /* -------- Programme -------- */
+    (function () {
+      const tl = document.getElementById('timeline');
+      WEDDING.events.forEach((ev) => {
+        const el = document.createElement('div');
+        el.className = 'event';
+        el.innerHTML =
+          '<div class="event-icon" aria-hidden="true">' + (ICONS[ev.icon] || '') + '</div>' +
+          '<div class="event-body">' +
+            '<div class="event-title aref">' + ev.title + '</div>' +
+            '<div class="event-line">' + ev.day + '</div>' +
+            '<div class="event-line">' + ev.time + '</div>' +
+            '<div class="event-line"><b>' + ev.venue + '</b></div>' +
+          '</div>';
+        tl.appendChild(el);
+      });
+    })();
+
+    /* -------- Bouton « Ajouter au calendrier » -------- */
+    (function () {
+      const start = new Date(WEDDING.dateISO);
+      const end = new Date(start.getTime() + 4 * 3600000);
+      const fmt = (d) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+      const params = new URLSearchParams({
+        action: 'TEMPLATE',
+        text: 'زفاف ' + WEDDING.groom + ' و ' + WEDDING.bride,
+        dates: fmt(start) + '/' + fmt(end),
+        location: WEDDING.venueWedding,
+        details: 'يشرّفنا حضوركم',
+      });
+      document.getElementById('cal-btn').href = 'https://www.google.com/calendar/render?' + params.toString();
+    })();
+
+    /* -------- Particules dorées + pétales -------- */
+    (function () {
+      const gold = [
+        ['6%','0s','11s',7], ['20%','3s','14s',5], ['34%','6s','12s',8], ['48%','1.5s','15s',4],
+        ['62%','4.5s','13s',6], ['76%','2s','16s',5], ['90%','5.5s','11.5s',8],
+      ];
+      const petals = [
+        ['12%','1s','12s',14], ['28%','5s','15s',11], ['44%','2.5s','13s',16],
+        ['60%','7s','14s',12], ['74%','3.5s','16s',15], ['88%','0.5s','12.5s',13],
+      ];
+      const frag = document.createDocumentFragment();
+      for (const [left, delay, dur, size] of gold) {
+        const s = document.createElement('span');
+        s.className = 'particle';
+        s.style.left = left; s.style.width = s.style.height = size + 'px';
+        s.style.animationDelay = delay; s.style.animationDuration = dur;
+        frag.appendChild(s);
+      }
+      for (const [left, delay, dur, size] of petals) {
+        const s = document.createElement('span');
+        s.className = 'petal';
+        s.style.left = left; s.style.width = s.style.height = size + 'px';
+        s.style.animationDelay = delay; s.style.animationDuration = dur;
+        frag.appendChild(s);
+      }
+      document.body.appendChild(frag);
+    })();
+
+    /* -------- Ouverture de l'enveloppe -------- */
+    const envelope = document.getElementById('envelope');
+    const openInvitation = () => {
+      if (envelope.classList.contains('open')) return;
+      envelope.classList.add('open');
+      setTimeout(() => {
+        document.getElementById('envelope-screen').classList.add('hidden');
+        document.getElementById('card-screen').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 650);
+    };
+    envelope.addEventListener('click', openInvitation);
+    envelope.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openInvitation(); }
+    });
+
+    /* -------- Compte à rebours -------- */
+    const target = new Date(WEDDING.dateISO).getTime();
+    const countdownEl = document.getElementById('countdown');
+    const marriedEl = document.getElementById('married');
+    const UNITS = [['يوم',86400000],['ساعة',3600000],['دقيقة',60000],['ثانية',1000]];
+    function renderCountdown() {
+      const diff = target - Date.now();
+      if (diff <= 0) { countdownEl.classList.add('hidden'); marriedEl.classList.remove('hidden'); return; }
+      countdownEl.innerHTML = '';
+      let rem = diff;
+      for (const [label, ms] of UNITS) {
+        const val = Math.floor(rem / ms); rem -= val * ms;
+        const cell = document.createElement('div');
+        cell.className = 'cd-cell';
+        cell.innerHTML = '<div class="cd-num kufi">' + formatNum(val) + '</div><div class="cd-label kufi">' + label + '</div>';
+        countdownEl.appendChild(cell);
+      }
+    }
+    renderCountdown();
+    setInterval(renderCountdown, 1000);
+  </script>
+</body>
+</html>
