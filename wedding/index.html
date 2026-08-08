@@ -204,7 +204,18 @@
 
     /* ============================ PROGRAMME ============================ */
     .program-title { font-size: clamp(15px,4vw,19px); letter-spacing: .1em; color: var(--gold-3); margin-bottom: 4px; }
-    .timeline { display: grid; gap: clamp(12px,3vw,16px); max-width: 500px; margin: 16px auto 0; }
+    .timeline { display: grid; gap: clamp(22px,5vw,32px); max-width: 500px; margin: 16px auto 0; }
+    .prog-group { display: grid; gap: 12px; }
+    .prog-title {
+      justify-self: center; margin-bottom: 2px;
+      padding: 7px 20px; border-radius: 999px;
+      background: linear-gradient(135deg, #fbf1d8, #f2e2bd);
+      border: 1px solid rgba(181,142,60,.55);
+      color: var(--burgundy); font-weight: 700;
+      font-size: clamp(15px,4vw,19px); letter-spacing: .04em;
+      box-shadow: 0 4px 12px rgba(138,106,36,.15);
+    }
+    .prog-days { display: grid; gap: 12px; }
     .day {
       text-align: right;
       background: linear-gradient(#fbf5e8, #f3e9d1);
@@ -219,13 +230,7 @@
       padding-bottom: 10px; margin-bottom: 12px;
       border-bottom: 1px dashed rgba(181,142,60,.5);
     }
-    .day-num {
-      flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, var(--gold-2), var(--gold-3));
-      color: #fff; font-size: 15px; font-weight: 700;
-      box-shadow: 0 3px 8px rgba(138,106,36,.3);
-    }
+    .day-cal { display: inline-flex; color: var(--gold-3); }
     .day-date { font-size: clamp(18px,4.8vw,24px); color: var(--green); }
     .day-events { display: grid; gap: 12px; }
     .day-event { display: flex; align-items: center; gap: 12px; }
@@ -360,9 +365,8 @@
           <span class="divider-line rev"></span>
         </div>
 
-        <!-- 8 : Programme -->
+        <!-- 8 : Programmes (العروسة + العريس) -->
         <div>
-          <p class="program-title kufi">برنامج الحفل</p>
           <div class="timeline" id="timeline"></div>
         </div>
 
@@ -411,28 +415,46 @@
       // Plage de dates affichée en tête
       dateRange: '20 – 22 أوت 2026',
 
-      // Programme groupé par jour
-      days: [
+      // Deux programmes : côté العروسة (mariée) et côté العريس (marié)
+      programs: [
         {
-          date: 'الخميس 20 أوت 2026',
-          venue: 'قاعة عنتر 3',
-          events: [
-            { icon: 'dinner', title: 'مأدبة العشاء', time: 'من الساعة الخامسة إلى السابعة مساءً' },
-            { icon: 'party',  title: 'سهرية',        time: 'بداية من الساعة التاسعة مساءً' },
+          title: 'برنامج العروسة',
+          days: [
+            {
+              date: 'الجمعة 21 أوت 2026',
+              venue: 'قاعة المركيز',
+              events: [
+                { icon: 'dinner', title: 'مأدبة عشاء العروسة', time: 'بداية من الساعة الخامسة مساءً' },
+                { icon: 'henna',  title: 'حنة العروسة',        time: 'بداية من الساعة التاسعة مساءً' },
+              ],
+            },
           ],
         },
         {
-          date: 'الجمعة 21 أوت 2026',
-          venue: 'قاعة عنتر 3',
-          events: [
-            { icon: 'party', title: 'سهرية', time: 'بداية من الساعة التاسعة مساءً' },
-          ],
-        },
-        {
-          date: 'السبت 22 أوت 2026',
-          venue: 'قاعة عنتر 2',
-          events: [
-            { icon: 'rings', title: 'الدخول (حفل الزفاف)', time: 'بداية من الساعة التاسعة مساءً' },
+          title: 'برنامج العريس',
+          days: [
+            {
+              date: 'الخميس 20 أوت 2026',
+              venue: 'قاعة عنتر 3',
+              events: [
+                { icon: 'dinner', title: 'مأدبة العشاء', time: 'من الساعة الخامسة إلى السابعة مساءً' },
+                { icon: 'party',  title: 'سهرية',        time: 'بداية من الساعة التاسعة مساءً' },
+              ],
+            },
+            {
+              date: 'الجمعة 21 أوت 2026',
+              venue: 'قاعة عنتر 3',
+              events: [
+                { icon: 'party', title: 'سهرية', time: 'بداية من الساعة التاسعة مساءً' },
+              ],
+            },
+            {
+              date: 'السبت 22 أوت 2026',
+              venue: 'قاعة عنتر 2',
+              events: [
+                { icon: 'rings', title: 'الدخول (حفل الزفاف)', time: 'بداية من الساعة التاسعة مساءً' },
+              ],
+            },
           ],
         },
       ],
@@ -474,11 +496,12 @@
     mapBtn.textContent = '📍 موقع ' + WEDDING.venueWedding;
     document.title = 'دعوة زفاف — ' + WEDDING.groom + ' و ' + WEDDING.bride;
 
-    /* -------- Programme (groupé par jour) -------- */
+    /* -------- Programmes (العروسة + العريس) -------- */
     (function () {
       const tl = document.getElementById('timeline');
       const pin = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.6"/></svg>';
-      WEDDING.days.forEach((d, i) => {
+      const cal = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4.5" width="18" height="17" rx="2"/><path d="M3 9h18M8 2.5v4M16 2.5v4" stroke-linecap="round"/></svg>';
+      const dayCard = (d) => {
         const rows = d.events.map((ev) =>
           '<div class="day-event">' +
             '<span class="day-event-icon" aria-hidden="true">' + (ICONS[ev.icon] || '') + '</span>' +
@@ -488,16 +511,19 @@
             '</span>' +
           '</div>'
         ).join('');
-        const card = document.createElement('div');
-        card.className = 'day';
-        card.innerHTML =
-          '<div class="day-head">' +
-            '<span class="day-num kufi">' + formatNum(i + 1) + '</span>' +
-            '<span class="day-date aref">' + d.date + '</span>' +
-          '</div>' +
-          '<div class="day-events">' + rows + '</div>' +
-          '<div class="day-venue"><span class="day-venue-pin" aria-hidden="true">' + pin + '</span>' + d.venue + '</div>';
-        tl.appendChild(card);
+        return '<div class="day">' +
+            '<div class="day-head"><span class="day-cal" aria-hidden="true">' + cal + '</span><span class="day-date aref">' + d.date + '</span></div>' +
+            '<div class="day-events">' + rows + '</div>' +
+            '<div class="day-venue"><span class="day-venue-pin" aria-hidden="true">' + pin + '</span>' + d.venue + '</div>' +
+          '</div>';
+      };
+      WEDDING.programs.forEach((prog) => {
+        const group = document.createElement('div');
+        group.className = 'prog-group';
+        group.innerHTML =
+          '<p class="prog-title kufi">' + prog.title + '</p>' +
+          '<div class="prog-days">' + prog.days.map(dayCard).join('') + '</div>';
+        tl.appendChild(group);
       });
     })();
 
