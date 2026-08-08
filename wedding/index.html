@@ -205,25 +205,46 @@
     /* ============================ PROGRAMME ============================ */
     .program-title { font-size: clamp(15px,4vw,19px); letter-spacing: .1em; color: var(--gold-3); margin-bottom: 4px; }
     .timeline { display: grid; gap: clamp(12px,3vw,16px); max-width: 500px; margin: 16px auto 0; }
-    .event {
-      display: flex; gap: 14px; align-items: flex-start; text-align: right;
+    .day {
+      text-align: right;
       background: linear-gradient(#fbf5e8, #f3e9d1);
-      border: 1px solid rgba(181,142,60,.4); border-radius: 14px;
-      padding: clamp(14px,3.5vw,18px);
+      border: 1px solid rgba(181,142,60,.4); border-radius: 16px;
+      padding: clamp(14px,3.5vw,20px);
       box-shadow: 0 6px 16px rgba(138,106,36,.1);
       transition: transform .2s ease, box-shadow .2s ease;
     }
-    @media (hover: hover) { .event:hover { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(138,106,36,.18); } }
-    .event-icon {
-      flex-shrink: 0; width: 46px; height: 46px; border-radius: 50%;
+    @media (hover: hover) { .day:hover { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(138,106,36,.18); } }
+    .day-head {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      padding-bottom: 10px; margin-bottom: 12px;
+      border-bottom: 1px dashed rgba(181,142,60,.5);
+    }
+    .day-num {
+      flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--gold-2), var(--gold-3));
+      color: #fff; font-size: 15px; font-weight: 700;
+      box-shadow: 0 3px 8px rgba(138,106,36,.3);
+    }
+    .day-date { font-size: clamp(18px,4.8vw,24px); color: var(--green); }
+    .day-events { display: grid; gap: 12px; }
+    .day-event { display: flex; align-items: center; gap: 12px; }
+    .day-event-icon {
+      flex-shrink: 0; width: 42px; height: 42px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center; color: #fff;
       background: linear-gradient(135deg, var(--gold-2), var(--gold-3));
       box-shadow: 0 4px 10px rgba(138,106,36,.3);
     }
-    .event-body { flex: 1; }
-    .event-title { font-size: clamp(17px,4.4vw,21px); color: var(--green); font-weight: 700; margin-bottom: 5px; }
-    .event-line { font-size: clamp(13px,3.4vw,15px); color: var(--ink-soft); line-height: 1.7; }
-    .event-line b { color: var(--burgundy); font-weight: 700; }
+    .day-event-body { display: flex; flex-direction: column; gap: 2px; }
+    .day-event-title { font-size: clamp(17px,4.4vw,21px); color: var(--green); font-weight: 700; line-height: 1.2; }
+    .day-event-time { font-size: clamp(13px,3.4vw,15px); color: var(--ink-soft); line-height: 1.5; }
+    .day-venue {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      margin-top: 12px; padding-top: 10px;
+      border-top: 1px dashed rgba(181,142,60,.5);
+      color: var(--burgundy); font-weight: 700; font-size: clamp(14px,3.6vw,16px);
+    }
+    .day-venue-pin { display: inline-flex; color: var(--gold-3); }
 
     .countdown { display: grid; grid-template-columns: repeat(4,1fr); gap: clamp(8px,2.4vw,14px); margin: clamp(22px,5vw,32px) auto 0; max-width: 420px; }
     .cd-cell { background: linear-gradient(#fbf5e8, #f1e6cd); border: 1px solid rgba(181,142,60,.45); border-radius: 10px; padding: clamp(10px,3vw,16px) 4px; box-shadow: 0 6px 16px rgba(138,106,36,.12); }
@@ -388,21 +409,40 @@
       introBottom: 'بدعوتكم لحضور عقد زواج وحفل زفاف ابنيهما',
 
       // Plage de dates affichée en tête
-      dateRange: '21 – 22 أوت 2026',
+      dateRange: '20 – 22 أوت 2026',
 
-      // Programme des événements
-      events: [
-        { icon: 'dinner', title: 'مأدبة عشاء العروسة', day: 'يوم الجمعة 21 أوت 2026', time: 'بداية من الساعة الخامسة مساءً', venue: 'بقاعة « المركيز »' },
-        { icon: 'henna',  title: 'حنة العروسة',        day: 'يوم الجمعة 21 أوت 2026', time: 'بداية من الساعة التاسعة مساءً', venue: 'بقاعة « المركيز »' },
-        { icon: 'rings',  title: 'عقد القران و حفل الزفاف', day: 'يوم السبت 22 أوت 2026', time: 'بداية من الساعة التاسعة مساءً', venue: 'بقاعة « دار زمان 2 عنتر »' },
+      // Programme groupé par jour
+      days: [
+        {
+          date: 'الخميس 20 أوت 2026',
+          venue: 'قاعة عنتر 3',
+          events: [
+            { icon: 'dinner', title: 'مأدبة العشاء', time: 'من الساعة الخامسة إلى السابعة مساءً' },
+            { icon: 'party',  title: 'سهرية',        time: 'بداية من الساعة التاسعة مساءً' },
+          ],
+        },
+        {
+          date: 'الجمعة 21 أوت 2026',
+          venue: 'قاعة عنتر 3',
+          events: [
+            { icon: 'party', title: 'سهرية', time: 'بداية من الساعة التاسعة مساءً' },
+          ],
+        },
+        {
+          date: 'السبت 22 أوت 2026',
+          venue: 'قاعة عنتر 2',
+          events: [
+            { icon: 'rings', title: 'الدخول (حفل الزفاف)', time: 'بداية من الساعة التاسعة مساءً' },
+          ],
+        },
       ],
 
-      // Mariage principal (compte à rebours + calendrier)
+      // Événement principal — الدخول (compte à rebours + calendrier)
       dateISO: '2026-08-22T21:00:00',
 
-      // Lieu du mariage (bouton « موقع »)
-      venueWedding: 'دار زمان 2 عنتر',
-      mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('دار زمان 2 عنتر'),
+      // Lieu de la soirée du mariage (bouton « موقع »)
+      venueWedding: 'قاعة عنتر 2',
+      mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('قاعة عنتر 2'),
 
       // Phrase de clôture
       closing: 'ولكم العاقبة في الأفراح والمسرات',
@@ -417,6 +457,7 @@
       dinner: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 002 2h0V3M6 3v18M16 3c-1.5 0-3 1.5-3 5s1.5 5 3 5V3zm0 10v8"/></svg>',
       henna:  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c4.5-3 7-6 7-10a3 3 0 00-6 0 3 3 0 00-6 0c0 4 2.5 7 5 10z"/><path d="M12 11v4"/></svg>',
       rings:  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="14" r="5"/><circle cx="15" cy="14" r="5"/><path d="M9 4l1.5 2h3L15 4M9 4h6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      party:  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg>',
     };
 
     /* -------- Injection du contenu -------- */
@@ -433,21 +474,30 @@
     mapBtn.textContent = '📍 موقع ' + WEDDING.venueWedding;
     document.title = 'دعوة زفاف — ' + WEDDING.groom + ' و ' + WEDDING.bride;
 
-    /* -------- Programme -------- */
+    /* -------- Programme (groupé par jour) -------- */
     (function () {
       const tl = document.getElementById('timeline');
-      WEDDING.events.forEach((ev) => {
-        const el = document.createElement('div');
-        el.className = 'event';
-        el.innerHTML =
-          '<div class="event-icon" aria-hidden="true">' + (ICONS[ev.icon] || '') + '</div>' +
-          '<div class="event-body">' +
-            '<div class="event-title aref">' + ev.title + '</div>' +
-            '<div class="event-line">' + ev.day + '</div>' +
-            '<div class="event-line">' + ev.time + '</div>' +
-            '<div class="event-line"><b>' + ev.venue + '</b></div>' +
-          '</div>';
-        tl.appendChild(el);
+      const pin = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.6"/></svg>';
+      WEDDING.days.forEach((d, i) => {
+        const rows = d.events.map((ev) =>
+          '<div class="day-event">' +
+            '<span class="day-event-icon" aria-hidden="true">' + (ICONS[ev.icon] || '') + '</span>' +
+            '<span class="day-event-body">' +
+              '<span class="day-event-title aref">' + ev.title + '</span>' +
+              '<span class="day-event-time">' + ev.time + '</span>' +
+            '</span>' +
+          '</div>'
+        ).join('');
+        const card = document.createElement('div');
+        card.className = 'day';
+        card.innerHTML =
+          '<div class="day-head">' +
+            '<span class="day-num kufi">' + formatNum(i + 1) + '</span>' +
+            '<span class="day-date aref">' + d.date + '</span>' +
+          '</div>' +
+          '<div class="day-events">' + rows + '</div>' +
+          '<div class="day-venue"><span class="day-venue-pin" aria-hidden="true">' + pin + '</span>' + d.venue + '</div>';
+        tl.appendChild(card);
       });
     })();
 
