@@ -248,8 +248,14 @@
       margin-top: 12px; padding-top: 10px;
       border-top: 1px dashed rgba(181,142,60,.5);
       color: var(--burgundy); font-weight: 700; font-size: clamp(14px,3.6vw,16px);
+      text-decoration: none; -webkit-tap-highlight-color: transparent;
+      transition: color .15s ease, opacity .15s ease;
     }
+    .day-venue:hover { color: var(--gold-3); }
+    .day-venue:active { opacity: .8; }
     .day-venue-pin { display: inline-flex; color: var(--gold-3); }
+    .day-venue-name { text-decoration: underline; text-decoration-color: rgba(109,36,54,.35); text-underline-offset: 3px; }
+    .day-venue-hint { color: var(--gold-3); font-weight: 600; font-size: .8em; }
 
     .countdown { display: grid; grid-template-columns: repeat(4,1fr); gap: clamp(8px,2.4vw,14px); margin: clamp(22px,5vw,32px) auto 0; max-width: 420px; }
     .cd-cell { background: linear-gradient(#fbf5e8, #f1e6cd); border: 1px solid rgba(181,142,60,.45); border-radius: 10px; padding: clamp(10px,3vw,16px) 4px; box-shadow: 0 6px 16px rgba(138,106,36,.12); }
@@ -377,12 +383,6 @@
           <p class="married aref hidden" id="married">بارك الله لهما وبارك عليهما وجمع بينهما في خير 🤍</p>
         </div>
 
-        <!-- 10 : Actions -->
-        <div class="actions">
-          <a class="btn btn-gold" id="map-btn" target="_blank" rel="noopener noreferrer">📍 موقع قاعة الزفاف</a>
-          <a class="btn btn-outline" id="cal-btn" target="_blank" rel="noopener noreferrer">🗓️ أضف إلى التقويم</a>
-        </div>
-
         <!-- 11 -->
         <div class="divider" aria-hidden="true">
           <span class="divider-line"></span>
@@ -403,6 +403,10 @@
     /* ======================================================================
        ✏️  MODIFIEZ ICI TOUTES LES INFORMATIONS DU MARIAGE
        ====================================================================== */
+    // Localisations Google Maps
+    const MAP_MARQUISE = 'https://maps.app.goo.gl/qELrvzFGpCZ6AZHb9'; // قاعة المركيز
+    const MAP_ANTAR    = 'https://maps.app.goo.gl/Gyb2e9ahPZGEzh5S7'; // قاعة عنتر 2 و 3
+
     const WEDDING = {
       groom: 'مرتضى',           // اسم العريس (Mortadha)
       bride: 'ياسمين',          // اسم العروسة (Yassmine)
@@ -423,6 +427,7 @@
             {
               date: 'الجمعة 21 أوت 2026',
               venue: 'قاعة المركيز',
+              mapUrl: MAP_MARQUISE,
               events: [
                 { icon: 'dinner', title: 'مأدبة عشاء العروسة', time: 'بداية من الساعة الخامسة مساءً' },
                 { icon: 'henna',  title: 'حنة العروسة',        time: 'بداية من الساعة التاسعة مساءً' },
@@ -436,6 +441,7 @@
             {
               date: 'الخميس 20 أوت 2026',
               venue: 'قاعة عنتر 3',
+              mapUrl: MAP_ANTAR,
               events: [
                 { icon: 'dinner', title: 'مأدبة العشاء', time: 'من الساعة الخامسة إلى السابعة مساءً' },
                 { icon: 'party',  title: 'سهرية',        time: 'بداية من الساعة التاسعة مساءً' },
@@ -444,6 +450,7 @@
             {
               date: 'الجمعة 21 أوت 2026',
               venue: 'قاعة عنتر 3',
+              mapUrl: MAP_ANTAR,
               events: [
                 { icon: 'party', title: 'سهرية', time: 'بداية من الساعة التاسعة مساءً' },
               ],
@@ -451,6 +458,7 @@
             {
               date: 'السبت 22 أوت 2026',
               venue: 'قاعة عنتر 2',
+              mapUrl: MAP_ANTAR,
               events: [
                 { icon: 'rings', title: 'الدخول (حفل الزفاف)', time: 'بداية من الساعة التاسعة مساءً' },
               ],
@@ -459,12 +467,8 @@
         },
       ],
 
-      // Événement principal — الدخول (compte à rebours + calendrier)
+      // Événement principal — الدخول (compte à rebours)
       dateISO: '2026-08-22T21:00:00',
-
-      // Lieu de la soirée du mariage (bouton « موقع »)
-      venueWedding: 'قاعة عنتر 2',
-      mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('قاعة عنتر 2'),
 
       // Phrase de clôture
       closing: 'ولكم العاقبة في الأفراح والمسرات',
@@ -491,9 +495,6 @@
     document.getElementById('bride').textContent = WEDDING.bride;
     document.getElementById('date-range').textContent = WEDDING.dateRange;
     document.getElementById('closing').textContent = WEDDING.closing;
-    const mapBtn = document.getElementById('map-btn');
-    mapBtn.href = WEDDING.mapUrl;
-    mapBtn.textContent = '📍 موقع ' + WEDDING.venueWedding;
     document.title = 'دعوة زفاف — ' + WEDDING.groom + ' و ' + WEDDING.bride;
 
     /* -------- Programmes (العروسة + العريس) -------- */
@@ -514,7 +515,11 @@
         return '<div class="day">' +
             '<div class="day-head"><span class="day-cal" aria-hidden="true">' + cal + '</span><span class="day-date aref">' + d.date + '</span></div>' +
             '<div class="day-events">' + rows + '</div>' +
-            '<div class="day-venue"><span class="day-venue-pin" aria-hidden="true">' + pin + '</span>' + d.venue + '</div>' +
+            '<a class="day-venue" href="' + d.mapUrl + '" target="_blank" rel="noopener noreferrer">' +
+              '<span class="day-venue-pin" aria-hidden="true">' + pin + '</span>' +
+              '<span class="day-venue-name">' + d.venue + '</span>' +
+              '<span class="day-venue-hint">الخريطة ↗</span>' +
+            '</a>' +
           '</div>';
       };
       WEDDING.programs.forEach((prog) => {
@@ -525,21 +530,6 @@
           '<div class="prog-days">' + prog.days.map(dayCard).join('') + '</div>';
         tl.appendChild(group);
       });
-    })();
-
-    /* -------- Bouton « Ajouter au calendrier » -------- */
-    (function () {
-      const start = new Date(WEDDING.dateISO);
-      const end = new Date(start.getTime() + 4 * 3600000);
-      const fmt = (d) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-      const params = new URLSearchParams({
-        action: 'TEMPLATE',
-        text: 'زفاف ' + WEDDING.groom + ' و ' + WEDDING.bride,
-        dates: fmt(start) + '/' + fmt(end),
-        location: WEDDING.venueWedding,
-        details: 'يشرّفنا حضوركم',
-      });
-      document.getElementById('cal-btn').href = 'https://www.google.com/calendar/render?' + params.toString();
     })();
 
     /* -------- Particules dorées + pétales -------- */
